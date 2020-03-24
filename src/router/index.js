@@ -9,12 +9,20 @@ export default new Router({
     {
       path: '/',
       name: 'HelloWorld',
-      component: HelloWorld
+      component: HelloWorld,
+      meta: { title: '知否问答' }
     },
     {
       path: '/login',
       component: () => import('@/views/login'),
-      hidden: true
+      hidden: true,
+      meta: { title: '知否问答' }
+    },
+    {
+      path: '/register',
+      component: () => import('@/views/register'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })
