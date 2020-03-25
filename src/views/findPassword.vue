@@ -6,14 +6,6 @@
         <el-input v-model="registerForm.username" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
-      <el-form-item prop="department" label="部门">
-        <el-input v-model="registerForm.department" type="text" auto-complete="off">
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="job" label="岗位">
-        <el-input v-model="registerForm.job" type="text" auto-complete="off">
-        </el-input>
-      </el-form-item>
       <el-form-item prop="mail" label="邮箱">
         <el-input v-model="registerForm.mail" type="text" auto-complete="off">
         </el-input>
@@ -85,9 +77,6 @@
         codeUrl: "",
         registerForm: {
           username: '',
-          name: '',
-          department: '',
-          job: '',
           mail: '',
           code: '',
           password: '',
@@ -96,12 +85,6 @@
         registerRules: {
           username: [
             { required: true, trigger: 'blur', message: '工号不能为空' }
-          ],
-          department: [
-            { required: true, trigger: 'blur', message: '部门不能为空' }
-          ],
-          job: [
-            { required: true, trigger: 'blur', message: '岗位不能为空' }
           ],
           mail: [
             { required: true, message: '邮箱地址不能为空', trigger: 'blur' },
