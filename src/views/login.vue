@@ -25,9 +25,9 @@
                   show-word-limit clearable show-password>
         </el-input>
       </el-col>
-      <el-link style="margin-top: -25px;margin-left: 250px" icon="el-icon-findpassword" type="primary">忘记密码？</el-link>
+      <el-link @click="handelFindPassword" style="margin-top: -25px;margin-left: 250px" icon="el-icon-findpassword" type="primary">忘记密码？</el-link>
       <el-col :xs="24">
-        <el-button style="background-color: rgb(1, 170, 237);
+        <el-button @click="handellogin" style="background-color: rgb(1, 170, 237);
                         color: rgb(57, 61, 73);">
           登录</el-button>
         <el-button @click.native.prevent="handelregister"
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+  import { Message } from 'element-ui'
+
   export default {
     name: "register",
     data() {
@@ -54,6 +56,12 @@
     methods:{
       handelregister (){
         this.$router.push({path:'register'})
+      },
+      handelFindPassword (){
+        this.$router.push({path:'findPassword'})
+      },
+      handellogin (){
+        Message.success({message: '登录成功！'})
       }
     }
   };

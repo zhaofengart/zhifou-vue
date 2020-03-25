@@ -23,6 +23,12 @@ export default new Router({
       component: () => import('@/views/register'),
       hidden: true,
       meta: { title: '知否问答' }
+    },
+    {
+      path: '/findPassword',
+      component: () => import('@/views/findPassword'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })
