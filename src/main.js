@@ -6,15 +6,22 @@ import router from './router'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
-import Element from 'element-ui'
+import ElementUI from 'element-ui'
 import './assets/styles/element-variables.scss'
 
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 
-Vue.use(Element)
+// import 'element-ui/lib/theme-chalk/index.css'
+
+Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+router.beforeEach((to, from, next) => {
+  window.document.title = to.meta.title
+  next()
+})
 
 /* eslint-disable no-new */
 new Vue({
