@@ -67,7 +67,40 @@
                 <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"></div>
+                    <el-container class="TopstoryItem TopstoryItem-isRecommend">
+                      <el-header>Header</el-header>
+                      <el-container>
+                        <el-aside width="200px">Aside</el-aside>
+                        <el-main>Main</el-main>
+                      </el-container>
+                      <el-footer>Footer</el-footer>
+                    </el-container>
+
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,6)" :key="i">
+                      <div class="ContentItem AnswerItem">
+                        <h2 class="ContentItem-title">
+                          <a target="_blank" href="/question/382058831/answer/1103404813">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</a>
+                        </h2>
+                        <div class="RichContent">
+                          <div class="RichContent-cover">
+                            <div class="RichContent-cover-inner">
+                              <img src="https://pic1.zhimg.com/v2-9e4d48633106c39e368c2ec9a4fcbd7c_400x224.jpg" alt="cover" style="width: 190px; height: 105px;">
+                            </div>
+                          </div>
+                          <div class="RichContent-inner">
+                              <span class="RichText ztext CopyrightRichText-richText" itemprop="text">绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…</span>
+                              <el-button class="Button ContentItem-more Button--plain" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                          </div>
+                          <div class="ContentItem-actions">
+                            <el-button plain style="width: 100px;" class="Button--blue" icon="el-icon-edit">写回答</el-button>
+                            <el-button class="Button--plain ContentItem-action" icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
+                            <el-button class="Button--plain ContentItem-action" icon="el-icon-time" style="margin-left: 24px;">稍后答</el-button>
+                            <span style="margin-left: 100px;">2020年3月20日 16:00</span>
+                            <span style="margin-left: 50px;">666回答</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </el-card>
@@ -113,7 +146,14 @@
 </template>
 <script>
 export default {
-  
+  data () {
+    return {
+      storyList: []
+    }
+  },
+  computed: {
+    
+  }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -260,6 +300,10 @@ a, a em {
     border: none;
     border-radius: 0;
 }
+.Button--blue {
+    color: #0084ff;
+    border-color: #0084ff;
+}
 
 .AppHeader-profile {
     position: relative;
@@ -344,14 +388,93 @@ a, a em {
 
 // 列表
 .TopstoryItem {
-    border-radius: 0;
-    overflow: visible;
-    overflow: initial;
-    position: relative;
-    padding: 16px 20px;
+  border-bottom: 1px solid #e6ebf5;
+  border-radius: 0;
+  overflow: visible;
+  overflow: initial;
+  position: relative;
+  padding: 16px 20px;
 }
 .TopstoryItem-isRecommend {
-    padding: 20px;
+  padding: 20px;
+}
+
+.ContentItem-title {
+  font-size: 18px;
+  font-weight: 600;
+  font-synthesis: style;
+  line-height: 1.6;
+  color: #1a1a1a;
+  margin-top: -4px;
+  margin-bottom: -4px;
+}
+
+.RichContent {
+  line-height: 1.67;
+}
+
+.RichContent-cover {
+  position: relative;
+  width: 190px;
+  height: 105px;
+  margin-top: -2px;
+  margin-right: 18px;
+  margin-bottom: 4px;
+  float: left;
+  overflow: hidden;
+  background-position: 50%;
+  background-size: cover;
+  border-radius: 4px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.RichContent-cover-inner {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+
+.RichContent-inner {
+    margin-top: 9px;
+    margin-bottom: -4px;
+    overflow: hidden;
+}
+.ContentItem-actions {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 10px 20px;
+    margin: 0 -20px -10px;
+    color: #646464;
+    background: #fff;
+    clear: both;
+}
+
+.ContentItem-more {
+    padding: 0;
+    margin-left: 4px;
+    color: #175199;
+}
+
+.RichContent.is-collapsed .CopyrightRichText-richText {
+    pointer-events: none;
+}
+.ztext {
+    word-break: break-word;
+    line-height: 1.6;
+}
+
+.ContentItem-action {
+    margin-left: 24px;
+    font-size: 14px;
 }
 
 // 第二部分

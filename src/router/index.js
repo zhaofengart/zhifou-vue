@@ -15,7 +15,8 @@ export default new Router({
     {
       path: '/index2',
       component: () => import('@/views/index2'),
-      hidden: true
+      hidden: true,
+      meta: { title: '知否问答' }
     },
     {
       path: '/login',
