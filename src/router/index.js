@@ -13,6 +13,11 @@ export default new Router({
       meta: { title: '知否问答' }
     },
     {
+      path: '/index2',
+      component: () => import('@/views/index2'),
+      hidden: true
+    },
+    {
       path: '/login',
       component: () => import('@/views/login'),
       hidden: true,
