@@ -35,6 +35,18 @@ export default new Router({
       component: () => import('@/views/findPassword'),
       hidden: true,
       meta: { title: '知否问答' }
+    },
+    {
+      path: '/index',
+      component: () => import('@/views/index'),
+      hidden: true,
+      meta: { title: '知否问答' }
+    },
+    {
+      path: '/writeclass',
+      component: () => import('@/views/writeclass'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })
