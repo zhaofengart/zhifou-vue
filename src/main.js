@@ -11,6 +11,7 @@ import './assets/styles/element-variables.scss'
 
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
+import '@/assets/styles/zhifou.scss' // zhifou.css
 
 // import 'element-ui/lib/theme-chalk/index.css'
 

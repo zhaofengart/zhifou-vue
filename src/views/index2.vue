@@ -80,12 +80,12 @@
                           </div>
                           <div class="RichContent-inner">
                               <span class="RichText ztext CopyrightRichText-richText" itemprop="text">绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…</span>
-                              <el-button class="Button ContentItem-more Button--plain" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                              <el-button class="ContentItem-more Button--plain" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
                           </div>
                           <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue" icon="el-icon-edit">写回答</el-button>
-                            <el-button class="Button--plain ContentItem-action" icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
-                            <el-button class="Button--plain ContentItem-action" icon="el-icon-time" style="margin-left: 24px;">稍后答</el-button>
+                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit">写回答</el-button>
+                            <el-button class="Button--plain ContentItem-action Button--grey " icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
+                            <el-button class="Button--plain ContentItem-action Button--grey" icon="el-icon-time" style="margin-left: 24px;">稍后答</el-button>
                             <span style="margin-left: 100px;">2020年3月20日 16:00</span>
                             <span style="margin-left: 50px;">666回答</span>
                           </div>
@@ -126,7 +126,11 @@
                 <div slot="header" class="Leaderboard-header">
                   <span>本月排行榜</span>
                 </div>
-                
+                <div class="LeaderboardItem" v-for="i in (1,5)" :key="i">
+                  <div class="Ranking-item HotItem-rank HotItem-hot">{{i}}</div>
+                  <div class="Ranking-item">用户名{{i}}</div>
+                  <div class="Ranking-item">{{10 * (10 - i)}}<i class="el-icon-coin" style="margin-left: 5px; font-size: 24px;"></i></div>
+                </div>
               </el-card>
             </div>
           </div>
@@ -273,30 +277,6 @@ a, a em {
 .AppHeader-profile {
     position: relative;
 }
-.Button {
-    display: inline-block;
-    padding: 0 16px;
-    font-size: 22px;
-    line-height: 32px;
-    color: #8590a6;
-    text-align: center;
-    cursor: pointer;
-    background: none;
-    border: 1px solid;
-    border-radius: 3px;
-}
-.Button--link, .Button--plain {
-    height: auto;
-    padding: 0;
-    line-height: inherit;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-}
-.Button--blue {
-    color: #0084ff;
-    border-color: #0084ff;
-}
 
 .AppHeader-profile {
     position: relative;
@@ -379,7 +359,6 @@ a, a em {
   color: #0084ff;
   font-weight: 500;
 }
-
 // 列表
 .TopstoryItem {
   border-bottom: 1px solid #e6ebf5;
@@ -471,6 +450,7 @@ a, a em {
     font-size: 14px;
 }
 
+
 // 第二部分
 .GlobalSideBar {
   -webkit-box-flex: 1;
@@ -506,11 +486,40 @@ a, a em {
   font-size: 16px;
 }
 
+// 排行榜
 .Leaderboard-header {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  font-size: 18px;
+}
+
+.LeaderboardItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px;
+  border-bottom: 1px solid #e6ebf5;
+}
+
+.Ranking-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90px;
+  height: 50px;
+}
+
+.HotItem-hot {
+    color: #ff9607;
+}
+.HotItem-rank {
+    line-height: 1.6;
+    font-size: 18px;
+    // color: #999;
+    font-weight: 600;
+    font-synthesis: style;
 }
 
 </style>
