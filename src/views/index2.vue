@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <!-- 头部 -->
+    <!-- 页面头部 -->
     <header class="AppHeader">
       <div class="AppHeader-inner">
         <a href="//www.zhihu.com" aria-label="知否">知否</a>
@@ -49,7 +49,7 @@
     </header>
 
     <!-- 主要内容 -->
-    <main class="main">
+    <div class="main">
       <div>
         <div class="TopStory-container">
           <div class="Topstory-mainColumn">
@@ -67,15 +67,6 @@
                 <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <el-container class="TopstoryItem TopstoryItem-isRecommend">
-                      <el-header>Header</el-header>
-                      <el-container>
-                        <el-aside width="200px">Aside</el-aside>
-                        <el-main>Main</el-main>
-                      </el-container>
-                      <el-footer>Footer</el-footer>
-                    </el-container>
-
                     <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,6)" :key="i">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
@@ -141,7 +132,7 @@
           </div>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 <script>
@@ -166,7 +157,9 @@ export default {
 }
 
 .AppHeader {
-  position: relative;
+  position: fixed;
+  top: 0;
+  width: 100%;
   z-index: 100;
   min-width: 1032px;
   overflow: hidden;
@@ -320,6 +313,7 @@ a, a em {
 // 第一部分
 .main {
   display: block;
+  margin-top: 62px;
 }
 .TopStory-container {
   display: -webkit-box;
@@ -330,7 +324,7 @@ a, a em {
   align-items: flex-start;
   width: 1032px;
   padding: 0 16px;
-  margin: 10px auto;
+  margin: 0 auto;
 }
 .Topstory-mainColumn {
   -ms-flex-negative: 0;
