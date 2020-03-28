@@ -12,7 +12,7 @@
             <div class="Topstory-mainColumnCard">
               <el-card>
                 <!-- 头部 -->
-                <div slot="header"  class="TopstoryTabsHeader">
+                <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
                     <a class="TopstoryTabs-link" href="/" >推荐</a>
                     <a class="TopstoryTabs-link" href="/" >关注</a>
@@ -50,6 +50,7 @@
                   </div>
                 </div>
               </el-card>
+              
             </div>
           </div>
 
@@ -112,13 +113,13 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.container {
-  font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
-  font-size: 15px;
-  color: #1a1a1a;
-  background: #f6f6f6;
-  -webkit-tap-highlight-color: rgba(26,26,26,0);
-}
+// .container {
+//   font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+//   font-size: 15px;
+//   color: #1a1a1a;
+//   background: #f6f6f6;
+//   -webkit-tap-highlight-color: rgba(26,26,26,0);
+// }
 
 // 第一部分
 .main {
@@ -190,6 +191,12 @@ export default {
   font-weight: 500;
 }
 // 列表
+.Topstory-mainColumnCard .el-card:not(.Topstory-tabCard) {
+    margin-bottom: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-bottom: 1px solid #f0f2f7;
+}
 .TopstoryItem {
   border-bottom: 1px solid #e6ebf5;
   border-radius: 0;

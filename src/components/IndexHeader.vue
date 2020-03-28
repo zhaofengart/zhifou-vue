@@ -17,16 +17,18 @@
 
         <!-- 搜索部分 -->
         <div class="SearchBar">
-          <el-input size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容" class="SearchBar-input">
+          <label class="SearchBar-input">
+            <el-input size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容" >
             <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton"></el-button>
-          </el-input>
-          <el-button type="primary" class="SearchBar-askButton" >提问</el-button>
+            </el-input>
+          </label>
+          <el-button type="primary" class="SearchBar-askButton" @click="handlePublishQuestion">提问</el-button>
         </div>
 
         <!-- 用户信息 -->
         <div class="AppHeader-userInfo">
           <div class="Popover AppHeader-notifications">
-            <el-button class="el-icon-message-solid Button Button--plain">
+            <el-button class="el-icon-message-solid Button Button--plain" style="font-size: 23px;">
               <span style="display: inline-flex; align-items: center;">
               </span>
             </el-button>
@@ -50,7 +52,16 @@
 </template>
 <script>
 export default {
-  
+  data () {
+    return {
+
+    }
+  },
+  methods: {
+    handlePublishQuestion () {
+      this.$router.push({path: 'questionpublish'})
+    }
+  }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -125,6 +136,16 @@ a, a em {
   display: flex;
   align-items: center;
 }
+.SearchBar-toolWrapper {
+    position: relative;
+    z-index: 104;
+    width: 326px;
+}
+.SearchBar-tool {
+    position: relative;
+    float: left;
+    overflow: hidden;
+}
 .SearchBar-input {
     width: 326px;
     height: 34px;
@@ -133,14 +154,31 @@ a, a em {
     // -webkit-transition: width .2s ease,background .3s ease;
     // transition: width .2s ease,background .3s ease;
 }
-.SearchBar-searchButton {
-    margin-left: 12px;
-    padding: 0 12px;
-    background: transparent;
-    border-color: transparent;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+.Input-wrapper {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 180px;
+    height: 34px;
+    padding: 4px 10px;
+    font-size: 14px;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 3px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: background .2s,border .2s;
+    transition: background .2s,border .2s;
+    
 }
+.Input-wrapper--grey {
+    background: #f6f6f6;
+}
+
 .SearchBar-askButton {
   width: 60px;
   height: 34px;
