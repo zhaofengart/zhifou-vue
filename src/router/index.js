@@ -54,6 +54,12 @@ export default new Router({
       component: () => import('@/views/writeclass'),
       hidden: true,
       meta: { title: '知否问答' }
+    },
+    {
+      path: '/notificationCenter',
+      component: () => import('@/views/notificationCenter'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })

@@ -28,10 +28,40 @@
         <!-- 用户信息 -->
         <div class="AppHeader-userInfo">
           <div class="Popover AppHeader-notifications">
-            <el-button class="el-icon-message-solid Button Button--plain" style="font-size: 23px;">
+            <el-popover
+              placement="bottom"
+              width="300"
+              trigger="click"
+            >
+
+              <el-card style="height: 370px;margin: -12px">
+                <el-table
+                  :data="tableData"
+                  height="315"
+                  border
+                  style="width: 350px">
+                  <el-table-column
+                    prop="date"
+                    label="最近的通知"
+                    width="290px">
+                  </el-table-column>
+                </el-table>
+                <div class="footer">
+                  <el-link target="_blank" href="/#/index">
+                    查看全部通知>
+                  </el-link>
+                </div>
+              </el-card>
+
+              <el-button class="el-icon-message-solid Button Button--plain" slot="reference">
+                <span style="display: inline-flex; align-items: center;">
+                </span>
+              </el-button>
+            </el-popover>
+            <!--el-button class="el-icon-message-solid Button Button--plain" style="font-size: 23px;">
               <span style="display: inline-flex; align-items: center;">
               </span>
-            </el-button>
+            </el-button!-->
           </div>
           <div class="AppHeader-profile">
             <el-dropdown trigger="click">
@@ -54,7 +84,39 @@
 export default {
   data () {
     return {
-
+      tableData: [{
+        date: '2016-05-02',
+      },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },
+        {
+          date: '2016-05-02',
+        },]
     }
   },
   methods: {
@@ -75,6 +137,10 @@ export default {
   background-color: #ffffff;
   box-shadow: 0 1px 3px rgba(26,26,26,.1);
   background-clip: content-box;
+}
+.footer {
+  line-height: 60px;
+  text-align: right;
 }
 .AppHeader-inner {
   position: relative;
@@ -173,7 +239,7 @@ a, a em {
     box-sizing: border-box;
     -webkit-transition: background .2s,border .2s;
     transition: background .2s,border .2s;
-    
+
 }
 .Input-wrapper--grey {
     background: #f6f6f6;

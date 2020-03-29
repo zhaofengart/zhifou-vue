@@ -34,10 +34,12 @@
         </ul>
       </div>
     </header>
+    <div class="main">
+    <el-card style="height: 610px;width: 50%;margin-left: 350px;margin-top: 30px">
     <el-form ref="publishForm" :model="publishForm" :rules="publishRules">
       <el-form-item prop="sort">
         <el-input
-          style="margin-top: 30px;width: 50%;margin-left: 350px;"
+          style="margin-top: 10px;width: 100%;padding: 10px"
           v-model="publishForm.sort"
           placeholder="请输入文章分类（最多五十个字）"
           type="text"
@@ -48,7 +50,7 @@
       </el-form-item>
       <el-form-item prop="title">
         <el-input
-          style="margin-top: 30px;width: 50%;margin-left: 350px;"
+          style="margin-top: -20px;width: 100%;padding: 10px"
           v-model="publishForm.title"
           placeholder="请输入文章标题（最多五十个字）"
           type="text"
@@ -57,11 +59,13 @@
         >
         </el-input>
       </el-form-item>
-    <el-card style="height: 610px;width: 50%;margin-left: 350px;margin-top: 30px">
-      <quill-editor v-model="content" ref="myQuillEditor" style="height: 500px;" :options="editorOption">
+
+      <quill-editor v-model="content" ref="myQuillEditor" style="height: 380px;padding: 10px;margin-top: -10px" :options="editorOption">
       </quill-editor>
-    </el-card>
+
     </el-form>
+    </el-card>
+  </div>
   </div>
 </template>
 
@@ -73,7 +77,7 @@
   import 'quill/dist/quill.core.css'
   import 'quill/dist/quill.snow.css'
   import 'quill/dist/quill.bubble.css'
-  
+
 
   export default {
     name: 'FuncFormsEdit',
@@ -126,7 +130,9 @@
   }
 
   .AppHeader {
-    position: relative;
+    position: fixed;
+    top: 0;
+    width: 100%;
     z-index: 100;
     min-width: 1032px;
     overflow: hidden;
@@ -280,6 +286,7 @@
   // 第一部分
   .main {
     display: block;
+    margin-top: 62px;
   }
   .TopStory-container {
     display: -webkit-box;
