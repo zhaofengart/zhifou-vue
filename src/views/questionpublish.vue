@@ -56,8 +56,10 @@ export default {
   height: 400px;
 }
 .footer {
+  height: 35px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 80px;
   margin-bottom: 0;
 }
