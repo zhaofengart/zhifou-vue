@@ -61,18 +61,18 @@
               <el-card>
                 <div class="card">
                   <div class="GlobalWrite">
-                    <a href="" title="文章" class="GlobalWrite-navItem">
+                    <router-link to="/writeclass" title="文章" class="GlobalWrite-navItem">
                       <div class="el-icon-edit-outline GlobalWrite-navIcon"></div>
                       <div class="GlobalWrite-navTitle">写文章</div>
-                    </a>
-                    <a href="" title="草稿箱" class="GlobalWrite-navItem">
+                    </router-link>
+                    <router-link to="" title="草稿箱" class="GlobalWrite-navItem">
                       <div class="el-icon-document GlobalWrite-navIcon"></div>
                       <div class="GlobalWrite-navTitle">草稿箱</div>
-                    </a>
-                    <a href="" title="稍后答" class="GlobalWrite-navItem">
+                    </router-link>
+                    <router-link to="" title="稍后答" class="GlobalWrite-navItem">
                       <div class="el-icon-time GlobalWrite-navIcon"></div>
                       <div class="GlobalWrite-navTitle">稍后答</div>
-                    </a>
+                    </router-link>
                   </div>
                 </div>
               </el-card>
