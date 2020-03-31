@@ -53,7 +53,7 @@
                 </div>
               </el-card>
 
-              <el-button class="el-icon-message-solid Button Button--plain" slot="reference">
+              <el-button class="el-icon-message-solid Button Button--plain" slot="reference" style="font-size: 23px;">
                 <span style="display: inline-flex; align-items: center;">
                 </span>
               </el-button>

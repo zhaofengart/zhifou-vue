@@ -13,7 +13,7 @@
             </div>
           </el-form-item>
           <el-form-item>
-            <div class="footer">
+            <div class="QuestionPublish-footer">
               <el-checkbox v-model="isAnonymous">匿名提问</el-checkbox>
               <el-button type="primary" size="medium">发布问题</el-button>
             </div>
@@ -55,7 +55,7 @@ export default {
 .editor {
   height: 400px;
 }
-.footer {
+.QuestionPublish-footer {
   height: 35px;
   display: flex;
   justify-content: space-between;
