@@ -14,6 +14,8 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import '@/assets/styles/zhifou.scss' // zhifou.css
 
 // import 'element-ui/lib/theme-chalk/index.css'
+import IndexHeader from '@/components/IndexHeader'
+Vue.component('IndexHeader', IndexHeader)
 
 Vue.use(ElementUI)
 
