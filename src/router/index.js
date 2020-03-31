@@ -24,7 +24,12 @@ export default new Router({
       hidden: true,
       meta: { title: '知否问答' }
     },
-
+    {
+      path: '/profile',
+      component: () => import('@/views/profile'),
+      hidden: true,
+      meta: { title: '知否问答' }
+    },
     {
       path: '/login',
       component: () => import('@/views/login'),

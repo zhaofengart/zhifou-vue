@@ -69,7 +69,10 @@
                 <img class="Avatar AppHeader-profileAvatar" width="30" height="30" src="https://pic4.zhimg.com/da8e974dc_is.jpg" alt="">
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>我的主页</el-dropdown-item>
+                <router-link to="/profile">
+                  <el-dropdown-item>我的主页</el-dropdown-item>
+                </router-link>
+                
                 <el-dropdown-item>设置</el-dropdown-item>
                 <el-dropdown-item>退出</el-dropdown-item>
               </el-dropdown-menu>
