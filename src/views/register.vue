@@ -19,7 +19,7 @@
         </el-input>
       </el-form-item>
       <el-row :gutter="20">
-        <el-col :span="16">
+        <el-col :span="15">
           <el-form-item prop="code" label="验证码">
             <el-input
               v-model="registerForm.code"
@@ -28,15 +28,14 @@
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="9">
           <el-button
-            :loading="codeLoading"
             size="medium"
             type="primary"
             style="width:100%;"
             @click.native.prevent="handleGetCode"
-          >
-            <span v-if="!codeLoading">发送验证码</span>
+            :disabled="!disabledCodeBtn">
+            <span>{{codeText}}</span>
           </el-button>
         </el-col>
       </el-row>
@@ -83,6 +82,8 @@ export default {
   data() {
     return {
       codeUrl: "",
+      codeText: '发送验证码',
+      disabledCodeBtn: true,
       registerForm: {
         username: '',
         name: '',
@@ -115,7 +116,17 @@ export default {
           { required: true, trigger: 'blur', message: '密码不能为空' }
         ],
         confirmPassword: [
-          { required: true, trigger: 'blur', message: '确认密码不能为空' }
+          { required: true, trigger: 'blur', message: '确认密码不能为空' },
+          { validator: (rule, value, callback) => {
+              if(value === ''){
+                callback(new Error('请再次输入密码'))
+              }else if(value !== this.registerForm.password){
+                callback(new Error('两次输入密码不一致'))
+              }else{
+                callback( )
+              }
+            }, trigger: ['blur', 'change']
+          }
         ],
         code: [
           { required: true, trigger: 'change', message: '验证码不能为空' }
@@ -140,8 +151,23 @@ export default {
       })
     },
     handleGetCode () {
+      this.countDown(60)
       Message.success({message: '你点击了获取验证码按钮'})
-      this.codeLoading = true
+    },
+    // 发送验证码倒计时
+    countDown (time) {
+      if (time === 0) {
+        this.disabledCodeBtn = true
+        this.codeText = "发送验证码"
+        return
+      } else {
+        this.disabledCodeBtn = false;
+        this.codeText = '重新发送(' + time + ')'
+        time--
+      }
+      setTimeout(()=> {
+        this.countDown(time)
+      }, 1000)
     }
   }
 }
