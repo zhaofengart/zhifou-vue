@@ -47,7 +47,7 @@
                   </el-table-column>
                 </el-table>
                 <div class="footer">
-                  <el-link target="_blank" href="/#/index">
+                  <el-link target="_blank" href="/notificationCenter">
                     查看全部通知>
                   </el-link>
                 </div>
@@ -58,10 +58,6 @@
                 </span>
               </el-button>
             </el-popover>
-            <!--el-button class="el-icon-message-solid Button Button--plain" style="font-size: 23px;">
-              <span style="display: inline-flex; align-items: center;">
-              </span>
-            </el-button!-->
           </div>
           <div class="AppHeader-profile">
             <el-dropdown trigger="click">
@@ -74,7 +70,7 @@
                 </router-link>
                 
                 <el-dropdown-item>设置</el-dropdown-item>
-                <el-dropdown-item>退出</el-dropdown-item>
+                <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -125,6 +121,9 @@ export default {
   methods: {
     handlePublishQuestion () {
       this.$router.push({path: 'questionpublish'})
+    },
+    async logout () {
+      this.$router.push({path: 'login'})
     }
   }
 }
