@@ -22,7 +22,7 @@
                 <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,6)" :key="i">
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,5)" :key="i">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
                           <a target="_blank" href="/question/382058831/answer/1103404813">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</a>
@@ -35,7 +35,7 @@
                           </div>
                           <div class="RichContent-inner">
                               <span class="RichText ztext CopyrightRichText-richText" itemprop="text">绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…</span>
-                              <el-button class="ContentItem-more Button--plain" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                              <el-button v-if="contentStatus" class="ContentItem-more Button--plain" @click="contentToggle" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
                           </div>
                           <div class="ContentItem-actions">
                             <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit">写回答</el-button>
@@ -48,6 +48,14 @@
                       </div>
                     </div>
                   </div>
+                </div>
+                <!-- 分页 -->
+                <div class="Pagination">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="60">
+                  </el-pagination>
                 </div>
               </el-card>
               
@@ -104,11 +112,17 @@ export default {
   },
   data () {
     return {
+      contentStatus: true,
       storyList: []
     }
   },
   computed: {
     
+  },
+  methods: {
+    contentToggle () {
+
+    }
   }
 }
 </script>
@@ -125,6 +139,7 @@ export default {
 .main {
   display: block;
   margin-top: 62px;
+  margin-bottom: 50px;
 }
 .TopStory-container {
   display: -webkit-box;
@@ -358,5 +373,8 @@ export default {
     font-weight: 600;
     font-synthesis: style;
 }
-
+.Pagination {
+  margin: 15px auto;
+  text-align: center;
+}
 </style>

@@ -5,6 +5,7 @@ import HelloWorld from '@/components/HelloWorld'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history', // 去掉url中的#
   routes: [
     {
       path: '/',
