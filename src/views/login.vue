@@ -1,51 +1,55 @@
 <template>
   <div class="login">
-    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="login-form" label-width="80px">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" label-width="80px">
       <h3 class="title">华锐技术社区</h3>
-      <el-form-item prop="username" label="用户名">
-        <el-input v-model="registerForm.username"
-                  type="text"
-                  auto-complete="off"
-                  show-word-limit clearable
-        >
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="password" label="密码">
-        <el-input
-          v-model="registerForm.password"
-          type="password"
-          auto-complete="off"
-          show-word-limit clearable show-password
-        >
-        </el-input>
-      </el-form-item>
-      <el-link  @click="findPassWord"
-                style="margin-top: -25px;margin-left: 250px"
-                icon="el-icon-findpassword"
-                type="primary">忘记密码？ >
-      </el-link>
-      <el-form-item style="width:50%;">
-        <el-button-group>
-          <el-button
-            :loading="loading"
-            size="medium"
-            type="primary"
-            style="width:50%;"
-            @click.native.prevent="handlelogin"
+      <div class="setitem">
+        <el-form-item prop="username" label="工号">
+          <el-input v-model="loginForm.username"
+                    type="text"
+                    auto-complete="off"
+                    show-word-limit clearable
+                    style="width: 90%"
           >
-            <span v-if="!loading">登录</span>
-          </el-button>
-          <el-button
-            :loading="loading"
-            size="medium"
-            type="primary"
-            style="width:50%; margin-left: 160px;margin-top: -35.5px"
-            @click.native.prevent="handleRegister"
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password" label="密码">
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            auto-complete="off"
+            show-word-limit clearable show-password
+            style="width: 90%"
           >
-            <span v-if="!loading">注册</span>
-          </el-button>
-        </el-button-group>
-      </el-form-item>
+          </el-input>
+        </el-form-item>
+        <el-link  @click="findPassWord"
+                  style="margin-top: -5px;margin-left: 240px"
+                  icon="el-icon-findpassword"
+                  type="primary">忘记密码？
+        </el-link>
+        <el-form-item style="width:50%;">
+          <div class="setbutton">
+            <el-button
+              :loading="loading"
+              size="medium"
+              type="primary"
+              style="width:100%;"
+              @click.native.prevent="handlelogin"
+            >
+              <span v-if="!loading">登录</span>
+            </el-button>
+            <el-button
+              :loading="loading"
+              size="medium"
+              type="primary"
+              style="width:100%; margin-left: 110px;"
+              @click.native.prevent="handleRegister"
+            >
+              <span v-if="!loading">注册</span>
+            </el-button>
+          </div>
+        </el-form-item>
+      </div>
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
@@ -58,16 +62,16 @@
   import { Message } from 'element-ui'
 
   export default {
-    name: "Register",
+    name: "login",
     data() {
       return {
-        registerForm: {
+        loginForm: {
           username: '',
           password: '',
         },
-        registerRules: {
+        loginRules: {
           username: [
-            { required: true, trigger: 'blur', message: '用户名不能为空' }
+            { required: true, trigger: 'blur', message: '工号不能为空' }
           ],
           password: [
             { required: true, trigger: 'blur', message: '密码不能为空' }
@@ -78,11 +82,18 @@
     },
     methods: {
       handlelogin (){
-        this.$refs.registerForm.validate(valid => {
+        this.$refs.loginForm.validate(valid => {
           if (valid) {
-            Message.success({message: '你点击了登录按钮'})
-          }
-        })
+              this.loading = true;
+              this.$store.dispatch("Login", this.loginForm)
+              .then(() => {
+                this.$router.push({path: 'index2'})
+              })
+              .catch(() => {
+                this.loading = false;
+              })
+            }
+          })
       },
       handleRegister () {
         this.$router.push({path: 'register'})
@@ -103,6 +114,19 @@
     background-image: url("../assets/image/login-background.jpg");
     background-color: #b8e5f8;
     background-size: cover;
+  }
+  .setbutton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .setitem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: -10px;
   }
   .title {
     margin: 0px auto 30px auto;
