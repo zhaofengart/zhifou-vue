@@ -58,6 +58,9 @@ export default {
     maxSize: {
       type: Number,
       default: 4000 //kb
+    },
+    placeholder: {
+      type: String
     }
   },
   components: { quillEditor },
@@ -68,7 +71,7 @@ export default {
       editorOption: {
         placeholder: "",
         theme: "snow", // or 'bubble'
-        placeholder: "请输入内容",
+        placeholder: (this.placeholder === undefined || this.placeholder === '')? '请输入内容' : this.placeholder,
         modules: {
           toolbar: {
             container: toolbarOptions,
