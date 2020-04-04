@@ -129,6 +129,10 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+.logo {
+  font-size: 30px;
+  color: #0084ff;
+}
 .AppHeader {
   position: fixed;
   top: 0;
@@ -149,7 +153,7 @@ export default {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 1000px;
+  width: 1032px;
   height: 52px;
   padding: 0 16px;
   margin: 0 auto;
@@ -215,7 +219,7 @@ a, a em {
     overflow: hidden;
 }
 .SearchBar-input {
-    width: 326px;
+    width: 432px;
     height: 34px;
     padding-left: 12px;
     padding-right: 0;
