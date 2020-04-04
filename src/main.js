@@ -14,6 +14,8 @@ import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 import '@/assets/styles/zhifou.scss' // zhifou.css
 
+import './assets/icons' // icon
+
 import { parseTime, resetForm, addDateRange, download } from '@/utils/ruoyi'
 
 // import 'element-ui/lib/theme-chalk/index.css'
