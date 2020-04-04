@@ -66,36 +66,10 @@
           <div class="GlobalSideBar">
             <div>
               <!-- 快捷入口 -->
-              <el-card>
-                <div class="card">
-                  <div class="GlobalWrite">
-                    <router-link to="/writeclass" title="文章" class="GlobalWrite-navItem">
-                      <div class="el-icon-edit-outline GlobalWrite-navIcon"></div>
-                      <div class="GlobalWrite-navTitle">写文章</div>
-                    </router-link>
-                    <router-link to="" title="草稿箱" class="GlobalWrite-navItem">
-                      <div class="el-icon-document GlobalWrite-navIcon"></div>
-                      <div class="GlobalWrite-navTitle">草稿箱</div>
-                    </router-link>
-                    <router-link to="" title="稍后答" class="GlobalWrite-navItem">
-                      <div class="el-icon-time GlobalWrite-navIcon"></div>
-                      <div class="GlobalWrite-navTitle">稍后答</div>
-                    </router-link>
-                  </div>
-                </div>
-              </el-card>
+              <QuickEntry></QuickEntry>
 
               <!-- 排行榜 -->
-              <el-card>
-                <div slot="header" class="Leaderboard-header">
-                  <span>本月排行榜</span>
-                </div>
-                <div class="LeaderboardItem" v-for="i in (1,5)" :key="i">
-                  <div class="Ranking-item HotItem-rank HotItem-hot">{{i}}</div>
-                  <div class="Ranking-item">用户名{{i}}</div>
-                  <div class="Ranking-item">{{10 * (10 - i)}}<i class="el-icon-coin" style="margin-left: 5px; font-size: 24px;"></i></div>
-                </div>
-              </el-card>
+              <Leaderboard></Leaderboard>
             </div>
           </div>
         </div>
@@ -105,10 +79,14 @@
 </template>
 <script>
 import IndexHeader from '@/components/IndexHeader'
+import QuickEntry from '@/components/QuickEntry'
+import Leaderboard from '@/components/Leaderboard'
 
 export default {
   components: {
-    IndexHeader
+    IndexHeader,
+    Leaderboard,
+    QuickEntry
   },
   data () {
     return {
@@ -310,69 +288,7 @@ export default {
   flex: 1 1;
   font-size: 14px;
 }
-.card {
-  // margin: -20px;
-  width: 294px;
-}
-.GlobalWrite {
-  display: flex;
-  flex-wrap: wrap;
-  overflow: visible;
-}
-.GlobalWrite-navItem {
-  flex: 0 0 98px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 98px;
-  height: 94px;
-}
-.GlobalWrite-navIcon {
-  font-size: 20px;
-  color: #8590a6;
-  margin-bottom: 6px;
-}
-.GlobalWrite-navTitle {
-  color: #444;
-  font-size: 16px;
-}
 
-// 排行榜
-.Leaderboard-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  font-size: 18px;
-}
-
-.LeaderboardItem {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 10px;
-  border-bottom: 1px solid #e6ebf5;
-}
-
-.Ranking-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 90px;
-  height: 50px;
-}
-
-.HotItem-hot {
-    color: #ff9607;
-}
-.HotItem-rank {
-    line-height: 1.6;
-    font-size: 18px;
-    // color: #999;
-    font-weight: 600;
-    font-synthesis: style;
-}
 .Pagination {
   margin: 15px auto;
   text-align: center;
