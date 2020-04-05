@@ -20,6 +20,12 @@ export default new Router({
       meta: { title: '知否问答' }
     },
     {
+      path: '/question',
+      component: () => import('@/views/questionDetail'),
+      hidden: true,
+      meta: { title: '知否问答' }
+    },
+    {
       path: '/questionpublish',
       component: () => import('@/views/questionpublish'),
       hidden: true,

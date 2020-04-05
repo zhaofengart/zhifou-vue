@@ -274,23 +274,6 @@ export default {
     margin-bottom: -4px;
     overflow: hidden;
 }
-.ContentItem-actions {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    padding: 10px 20px;
-    margin: 0 -20px -10px;
-    color: #646464;
-    background: #fff;
-    clear: both;
-}
-.ContentItem-action {
-    margin-left: 24px;
-    font-size: 14px;
-}
 .ContentItem-more {
     padding: 0;
     margin-left: 4px;
