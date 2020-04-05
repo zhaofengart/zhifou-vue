@@ -15,8 +15,7 @@
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
                     <a class="TopstoryTabs-link" href="/" >推荐</a>
-                    <a class="TopstoryTabs-link" href="/" >关注</a>
-                    <a class="TopstoryTabs-link" href="/" >热榜</a>
+                    <a class="TopstoryTabs-link" href="/" >新问题</a>
                   </div>
                 </div>
                 <!-- 文章列表 -->

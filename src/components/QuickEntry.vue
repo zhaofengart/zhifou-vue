@@ -45,7 +45,7 @@ export default {
   height: 94px;
 }
 .GlobalWrite-navIcon {
-  font-size: 30px;
+  font-size: 20px;
   color: #8590a6;
   margin-bottom: 10px;
 }
