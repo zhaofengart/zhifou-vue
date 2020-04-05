@@ -63,8 +63,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: undefined,
-        title: undefined,
+        title: '',
         content: undefined
       };
       this.resetForm("form");
