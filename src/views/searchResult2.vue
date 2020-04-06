@@ -8,25 +8,27 @@
       <div>
         <div class="TopStory-container">
           <div class="Topstory-mainColumn">
-            <a href="https://www.zhihu.com/special/19681091" target="_blank" class="css-w3ttmg"><img src="https://pic2.zhimg.com/v2-6e8fccc8a30e8cf15a90e7a894011579_r.jpg" class="css-vnkjjr"></a>
             <div class="Topstory-mainColumnCard">
               <el-card>
                 <!-- 头部 -->
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
-                    <a class="TopstoryTabs-link" href="/" >推荐</a>
-                    <a class="TopstoryTabs-link" href="/" >新问题</a>
+                    <a class="TopstoryTabs-link" href="/" >问题</a>
+                    <a class="TopstoryTabs-link" href="/" >文章</a>
                   </div>
                 </div>
                 <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,5)" :key="i">
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,3)" :key="i">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
-                          <router-link :to="{path: '/question', query: {questionId: 382058831}}" target="_blank">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</router-link>
+                          <router-link :to="{path: '/question', query: {questionId: 382058831}}">
+                            如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？
+                          </router-link>
+                          <!-- <a target="_blank" href="/question/382058831/answer/1103404813">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</a> -->
                         </h2>
-                        <div class="RichContent">
+                        <div class="RichContent" :class="{'is-collapsed': contentStatus}">
                           <div class="RichContent-cover">
                             <div class="RichContent-cover-inner">
                               <img src="https://pic1.zhimg.com/v2-9e4d48633106c39e368c2ec9a4fcbd7c_400x224.jpg" alt="cover" style="width: 190px; height: 105px;">
@@ -77,13 +79,11 @@
   </div>
 </template>
 <script>
-import IndexHeader from '@/components/IndexHeader'
 import QuickEntry from '@/components/QuickEntry'
 import Leaderboard from '@/components/Leaderboard'
 
 export default {
   components: {
-    IndexHeader,
     Leaderboard,
     QuickEntry
   },
@@ -104,15 +104,8 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-// .container {
-//   font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
-//   font-size: 15px;
-//   color: #1a1a1a;
-//   background: #f6f6f6;
-//   -webkit-tap-highlight-color: rgba(26,26,26,0);
-// }
 
-// 第一部分
+// 问题、文章列表
 .main {
   display: block;
   margin-top: 62px;
@@ -164,9 +157,6 @@ export default {
 .box-card {
   width: 400px;
 }
-.TopstoryTabsHeader {
-  // margin: -18px -20px;
-}
 .TopstoryTabs {
   display: flex;
   height: 58px;
@@ -213,6 +203,9 @@ export default {
 
 .RichContent {
   line-height: 1.67;
+  .is-collapsed {
+    max-height: 100px;
+  }
 }
 
 .RichContent-cover {
@@ -245,6 +238,9 @@ export default {
     margin-top: 9px;
     margin-bottom: -4px;
     overflow: hidden;
+}
+.RichContent.is-collapsed .RichContent-inner {
+    
 }
 .ContentItem-actions {
     display: -webkit-box;
