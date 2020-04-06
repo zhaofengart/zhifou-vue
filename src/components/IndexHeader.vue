@@ -2,24 +2,23 @@
   <div>
     <header class="AppHeader">
       <div class="AppHeader-inner">
-        <a href="//www.zhihu.com" aria-label="知否">知否</a>
+        <a href="/" aria-label="知否" class="logo">
+          <svg-icon icon-class="zhifou-logo"></svg-icon>
+        </a>
         <ul class="AppHeader-Tabs">
           <li class="Tabs-item AppHeader-Tab">
-            <a class="Tabs-link AppHeader-TabsLink" href="">首页</a>
+            <a class="Tabs-link AppHeader-TabsLink" href="/index2">首页</a>
           </li>
           <li class="Tabs-item AppHeader-Tab">
             <a class="Tabs-link AppHeader-TabsLink" href="">文章</a>
-          </li>
-          <li class="Tabs-item AppHeader-Tab">
-            <a class="Tabs-link AppHeader-TabsLink" href="">等你来答</a>
           </li>
         </ul>
 
         <!-- 搜索部分 -->
         <div class="SearchBar">
           <label class="SearchBar-input">
-            <el-input size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容" >
-            <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton"></el-button>
+            <el-input v-model="searchValue" size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容" @keyup.enter.native="handleSearch">
+            <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
             </el-input>
           </label>
           <el-button type="primary" class="SearchBar-askButton" @click="handlePublishQuestion">提问</el-button>
@@ -53,7 +52,7 @@
                 </div>
               </el-card>
 
-              <el-button class="el-icon-message-solid Button Button--plain" slot="reference" style="font-size: 23px;">
+              <el-button class="el-icon-message-solid Button Button--plain" slot="reference" style="font-size: 24px;">
                 <span style="display: inline-flex; align-items: center;">
                 </span>
               </el-button>
@@ -80,9 +79,12 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
+      searchValue: '',
       tableData: [{
         date: '2016-05-02',
       },
@@ -118,7 +120,26 @@ export default {
         },]
     }
   },
+  computed: {
+    // 属性映射，对应getters.js中的属性
+    ...mapGetters([
+      'historyList'
+    ])
+  },
+  watch: {
+    $route (to, from){
+    }
+  },
   methods: {
+    handleSearch () {
+      if (this.searchValue !== '') {
+        // 保存为历史记录
+        this.$store.dispatch("addHistory", this.searchValue)   
+        // 打印历史记录  
+        console.log(this.historyList)
+
+      }
+    },
     handlePublishQuestion () {
       this.$router.push({path: 'questionpublish'})
     },
@@ -129,6 +150,10 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+.logo {
+  font-size: 50px;
+  color: #0084ff;
+}
 .AppHeader {
   position: fixed;
   top: 0;
@@ -149,7 +174,7 @@ export default {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 1000px;
+  width: 1032px;
   height: 52px;
   padding: 0 16px;
   margin: 0 auto;
@@ -215,7 +240,7 @@ a, a em {
     overflow: hidden;
 }
 .SearchBar-input {
-    width: 326px;
+    width: 432px;
     height: 34px;
     padding-left: 12px;
     padding-right: 0;
