@@ -66,6 +66,12 @@ export default new Router({
       component: () => import('@/views/notificationCenter'),
       hidden: true,
       meta: { title: '知否问答' }
+    },
+    {
+      path: '/searchresult',
+      component: () => import('@/views/searchresult'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })
