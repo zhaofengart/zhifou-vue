@@ -12,11 +12,14 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8080`,
+      // [process.env.VUE_APP_BASE_API]: {
+        '/api': {
+        // target: `http://rest.apizza.net/mock/24643077d60b46d9dcf62c0321a7b6cb/`,
+        target: `http://localhost:9102/`,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          // ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/api': ''
         }
       }
     },
