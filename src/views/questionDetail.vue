@@ -12,7 +12,7 @@
                 <div class="QuestionHeader-detail">
                   <div class="QuestionRichText QuestionRichText--expandable" :class="{'QuestionRichText--collapsed': questionRichTextCollapsed}">
                     <div>
-                      <span class="RichText ztext" itemprop="text" v-html="question.content">{{question.content}}</span>
+                      <span class="RichText ztext" v-html="question.content"></span>
                       <button
                         v-show="questionRichTextCollapsed" type="button"
                         class="Button QuestionRichText-more Button--plain"
@@ -34,19 +34,19 @@
               <div class="NumberBoard QuestionFollowStatus-counts NumberBoard--divider">
                 <div class="NumberBoard-item">
                   <div class="NumberBoard-itemInner">
-                    <el-avatar shape="circle" size="large"></el-avatar>
-                    <div class="NumberBoard-itemName">姓名</div>
+                    <el-avatar shape="circle" size="large" :src="question.author.avatar"></el-avatar>
+                    <div class="NumberBoard-itemName">{{question.author.name}}</div>
                   </div>
                 </div>
                 <div class="NumberBoard-item">
                   <div class="NumberBoard-itemInner">
-                    <strong class="NumberBoard-itemValue" title="123">123</strong>
+                    <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.answeredNum}}</strong>
                     <div class="NumberBoard-itemName">被回答</div>
                   </div>
                 </div>
                 <div class="NumberBoard-item">
                   <div class="NumberBoard-itemInner">
-                    <strong class="NumberBoard-itemValue" title="31911735">31,911,735</strong>
+                    <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.viewedNum}}</strong>
                     <div class="NumberBoard-itemName">浏览量</div>
                   </div>
                 </div>
@@ -104,11 +104,12 @@
                       </div>
                       <!-- 回答表单 -->
                       <div class="AnswerForm">
-                        <Editor placeholder="写回答..." class="editor"></Editor>
+                        <!-- <Editor placeholder="写回答..." class="editor"></Editor> -->
+                        <MarkdownEditor v-model="answerForm.content" @contentChange="handleContentChange"></MarkdownEditor>
                         <div class="AnswerForm-footer">
                           <div class="AnswerForm-footerContent">
                             <el-button class="Button AnswerForm-submit Button--blue" plain>保存为草稿</el-button>
-                            <button type="button" class="Button AnswerForm-submit Button--primary Button--blue">提交回答</button>
+                            <button type="button" class="Button AnswerForm-submit Button--primary Button--blue" @click="handleSubmitAnswer">提交回答</button>
                           </div>
                         </div>
                       </div>
@@ -213,10 +214,14 @@
 </template>
 <script>
 import Editor from '@/components/Editor'
+import MarkdownEditor from '@/components/MarkdownEditor'
+import { getQuestion } from '@/api/question'
+import { escapeStringHTML } from '@/utils/filters'
 
 export default {
   components: {
-    Editor
+    Editor,
+    MarkdownEditor
   },
   data () {
     return {
@@ -228,20 +233,45 @@ export default {
       // isBottom: false,
       // isCollapsedTextActive: false,
       // isSpecialContentItemActions: false,
+      // 问题内容是否折叠
       questionRichTextCollapsed: false,
+      // 回答列表排序方式
       sortType: 1,
       answerList: [1, 2, 3, 4, 5],
+      // 回答列表对应的样式
       styleList: [],
+      // 问题
       question: {
         title: '为什么美国疫情这么严重?',
-        content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>'
+        // content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>',
+        content: '### 第一点',
+        "answeredNum": 123,
+        "viewedNum": 1230,
+        "author": {
+            "id": 1,
+            "name": "姓名",
+            "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+        }
+      },
+      // 回答表单
+      answerForm: {
+        content: ''
       }
     }
   },
   created () {
     this.initStyleList()
+    this.getQuestionById()
   },
   methods: {
+    // 获取问题详情
+    getQuestionById () {
+      getQuestion(this.$route.query.questionId).then(response => {
+        console.log(response)
+        this.question = response.data
+        this.question.content = escapeStringHTML(this.question.content)
+      })
+    },
     initStyleList() {
       var temp = {
         isCollapsed: true,
@@ -257,9 +287,11 @@ export default {
       }
       console.log('初始样式', this.styleList)
     },
+    // 折叠或展开问题内容
     handleExpandAndCollapseQuestionRichText () {
       this.questionRichTextCollapsed = !this.questionRichTextCollapsed
     },
+    // 折叠或展开回答内容
     handleExpandAndCollapseText (index) {
       this.styleList[index].isCollapsed = !this.styleList[index].isCollapsed
       this.styleList[index].isSticky = !this.styleList[index].isSticky
@@ -272,6 +304,12 @@ export default {
       this.styleList.forEach(item => {
         console.log('是否展开', item.isCollapsed)
       })
+    },
+    handleSubmitAnswer () {
+      console.log(this.answerForm)
+    },
+    handleContentChange (content) {
+      this.answerForm.content = content
     }
   }
 }

@@ -24,7 +24,7 @@
                     <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,5)" :key="i">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
-                          <router-link :to="{path: '/question', query: {questionId: 382058831}}" target="_blank">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</router-link>
+                          <router-link :to="{path: '/question', query: {questionId: 381161861}}" target="_blank">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</router-link>
                         </h2>
                         <div class="RichContent">
                           <div class="RichContent-cover">

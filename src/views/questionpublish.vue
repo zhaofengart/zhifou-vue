@@ -5,11 +5,12 @@
       <el-card class="QuestionPublishCard">
         <el-form ref="form" :model="form" :rules="rules">
           <el-form-item prop="title">
-            <el-input v-model="form.title" :placeholder="titlePlaceholder"></el-input>
+            <el-input v-model="form.title" :placeholder="titlePlaceholder" @input="handleRecommendQuestion"></el-input>
           </el-form-item>
           <el-form-item>
-            <div class="editor">
-              <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor>
+            <div class="contentEditor">
+              <!-- <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor> -->
+              <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" @contentChange="handleContentChange" @fullScreenChange="handleFullScreenChange" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
             </div>
           </el-form-item>
           <el-form-item>
@@ -23,27 +24,35 @@
   </div>
 </template>
 <script>
+import { addQuestion, recommendQuestion } from '@/api/question'
+
 import IndexHeader from '@/components/IndexHeader'
 import Editor from '@/components/Editor'
+import MarkdownEditor from '@/components/MarkdownEditor'
 
 export default {
   components: {
     IndexHeader,
-    Editor
+    Editor,
+    MarkdownEditor
   },
   data () {
     return {
+      // 是否全屏，如果是，则编辑框不需要设置高度，如果不是，则需要设置高度
+      isFullScreen: false,
       titlePlaceholder: '写下你的问题，请以“？”结尾',
       contentPlaceholder: '输入问题背景、条件等详细信息（选填）',
       // 表单参数
-      form: {},
+      form: {
+        content: ''
+      },
       // 表单校验
       rules: {
         title: [
           { min: 4, message: '至少输入4个字', trigger: 'blur'},
           { max: 49, message: '已超过49个字', trigger: 'blur'},
           {
-            pattern: /\?$/,
+            pattern: /[\?|？]$/,
             message: "你还没有给问题添加问号",
             trigger: ['blur']
           }
@@ -64,7 +73,7 @@ export default {
     reset() {
       this.form = {
         title: '',
-        content: undefined
+        content: ''
       };
       this.resetForm("form");
     },
@@ -73,8 +82,21 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('校验成功')
+          console.log(this.form)
+          addQuestion(this.form)
         }
       })
+    },
+    handleRecommendQuestion () {
+      recommendQuestion(this.form.title).then(resp => {
+        console.log(resp)
+      })
+    },
+    handleContentChange (val) {
+      this.form.content = val
+    },
+    handleFullScreenChange (isFull) {
+      this.isFullScreen = isFull
     }
   }
 }
@@ -86,19 +108,19 @@ export default {
   margin-top: 62px;
 }
 .QuestionPublishCard {
-  width: 800px;
+  width: 1000px;
   padding: 20px 25px 0 25px;
   margin: 10px auto;
 }
-.editor {
-  height: 400px;
+.notFull {
+  height: 500px;
 }
 .QuestionPublish-footer {
   height: 35px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 80px;
+  // margin-top: 80px;
   margin-bottom: 0;
 }
 
