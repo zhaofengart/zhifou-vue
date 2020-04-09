@@ -17,6 +17,7 @@ import '@/assets/styles/zhifou.scss' // zhifou.css
 import './assets/icons' // icon
 
 import { parseTime, resetForm, addDateRange, download } from '@/utils/ruoyi'
+import { escapeStringHTML } from '@/utils/filters'
 
 // import 'element-ui/lib/theme-chalk/index.css'
 import IndexHeader from '@/components/IndexHeader'
@@ -33,6 +34,8 @@ Vue.component('IndexHeader', IndexHeader)
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+Vue.prototype.escapeStringHTML = escapeStringHTML
 
 router.beforeEach((to, from, next) => {
   window.document.title = to.meta.title

@@ -57,11 +57,11 @@ export default {
     change(value, render){
         // render 为 markdown 解析后的结果[html]
         this.html = render;
-        this.$emit("contentChange", this.content);
+        this.$emit('update:content', this.content)
     },
     // 处理切换全屏后的方法
     handleSwitchFullScreen (isFull) {
-      this.$emit('fullScreenChange', isFull)
+      this.$emit('update:isFull', isFull)
     }
   },
   mounted() {

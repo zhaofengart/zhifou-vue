@@ -10,7 +10,7 @@
           <el-form-item>
             <div class="contentEditor">
               <!-- <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor> -->
-              <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" @contentChange="handleContentChange" @fullScreenChange="handleFullScreenChange" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
+              <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
             </div>
           </el-form-item>
           <el-form-item>
@@ -91,9 +91,6 @@ export default {
       recommendQuestion(this.form.title).then(resp => {
         console.log(resp)
       })
-    },
-    handleContentChange (val) {
-      this.form.content = val
     },
     handleFullScreenChange (isFull) {
       this.isFullScreen = isFull

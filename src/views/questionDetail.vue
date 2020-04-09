@@ -16,7 +16,7 @@
                       <button
                         v-show="questionRichTextCollapsed" type="button"
                         class="Button QuestionRichText-more Button--plain"
-                        @click="handleExpandAndCollapseQuestionRichText">显示全部 
+                        @click="questionRichTextCollapsed = !questionRichTextCollapsed">显示全部 
                         <span style="display: inline-flex; align-items: center;">
                           ​<svg class="Zi Zi--ArrowDown" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
                             <path d="M12 13L8.285 9.218a.758.758 0 0 0-1.064 0 .738.738 0 0 0 0 1.052l4.249 4.512a.758.758 0 0 0 1.064 0l4.246-4.512a.738.738 0 0 0 0-1.052.757.757 0 0 0-1.063 0L12.002 13z" fill-rule="evenodd"></path>
@@ -32,22 +32,38 @@
             <!-- 右边的信息 -->
             <div class="QuestionHeader-side">
               <div class="NumberBoard QuestionFollowStatus-counts NumberBoard--divider">
-                <div class="NumberBoard-item">
-                  <div class="NumberBoard-itemInner">
-                    <el-avatar shape="circle" size="large" :src="question.author.avatar"></el-avatar>
-                    <div class="NumberBoard-itemName">{{question.author.name}}</div>
+                <div class="NumberBoard-header">
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <el-avatar shape="circle" size="large" :src="question.author.avatar"></el-avatar>
+                    </div>
+                  </div>
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.answeredNum}}</strong>
+                    </div>
+                  </div>
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.viewedNum}}</strong>
+                    </div>
                   </div>
                 </div>
-                <div class="NumberBoard-item">
-                  <div class="NumberBoard-itemInner">
-                    <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.answeredNum}}</strong>
-                    <div class="NumberBoard-itemName">被回答</div>
+                <div class="NumberBoard-footer">
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <div class="NumberBoard-itemName">{{question.author.name}}</div>
+                    </div>
                   </div>
-                </div>
-                <div class="NumberBoard-item">
-                  <div class="NumberBoard-itemInner">
-                    <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.viewedNum}}</strong>
-                    <div class="NumberBoard-itemName">浏览量</div>
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <div class="NumberBoard-itemName">被回答</div>
+                    </div>
+                  </div>
+                  <div class="NumberBoard-item">
+                    <div class="NumberBoard-itemInner">
+                      <div class="NumberBoard-itemName">浏览量</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -67,7 +83,7 @@
                   </el-button>
                 </div>
                 <div v-show="!questionRichTextCollapsed" class="QuestionHeader-actions">
-                  <button type="button" class="Button Button-plain" @click="handleExpandAndCollapseQuestionRichText">
+                  <button type="button" class="Button Button-plain" @click="questionRichTextCollapsed = !questionRichTextCollapsed">
                     收起
                     <span style="display: inline-flex; align-items: center;">​
                       <svg-icon icon-class="arrow-up"></svg-icon>
@@ -105,8 +121,8 @@
                       <!-- 回答表单 -->
                       <div class="AnswerForm">
                         <!-- <Editor placeholder="写回答..." class="editor"></Editor> -->
-                        <MarkdownEditor v-model="answerForm.content" @contentChange="handleContentChange"></MarkdownEditor>
-                        <div class="AnswerForm-footer">
+                        <MarkdownEditor v-model="answerForm.content" v-bind:content.sync="answerForm.content" v-bind:isFull.sync="isFullScreen"></MarkdownEditor>
+                        <div class="AnswerForm-footer" :class="{ 'is-write-answer-footer-fixed': isFullScreen}">
                           <div class="AnswerForm-footerContent">
                             <el-button class="Button AnswerForm-submit Button--blue" plain>保存为草稿</el-button>
                             <button type="button" class="Button AnswerForm-submit Button--primary Button--blue" @click="handleSubmitAnswer">提交回答</button>
@@ -122,45 +138,43 @@
                 <el-card>
                   <!-- 回答头部 -->
                   <div slot="header" class="List-header">
-                    <el-radio-group v-model="sortType">
+                    <el-radio-group v-model="queryParam.sort">
                       <el-radio :label="1">按热度排序</el-radio>
                       <el-radio :label="2">按时间排序</el-radio>
-                    </el-radio-group>
+                    </el-radio-group>s
                   </div>
 
                   <!-- 回答内容列表 -->
-                  <div class="List-item" v-for="(item, i) in answerList" :key="i">
+                  <div class="List-item" v-for="(item, index) in answerList" :key="item.id" >
                     <div class="ContentItem AnswerItem">
                       <!-- 回答者信息及回答时间 -->
                       <div class="ContentItem-meta">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="square" size="large"></el-avatar>
+                          <el-avatar shape="square" size="large" :src="item.user.avatar"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
-                              <span class="AuthorInfo-name">小小猪排酱中游</span>
+                              <span class="AuthorInfo-name">{{item.user.name}}</span>
                             </div>
                             <div class="AuthorInfo-job">
-                              <span>Java开发</span>
+                              <span>{{item.user.job}}</span>
                             </div>
                           </div>
                           <div class="publishTime">
-                            <span>2020-4-2 13:50</span>
+                            <span>{{item.createTime}}</span>
                           </div>
                         </div>
                       </div>
-                      <div class="RichContent RichContent--unescapable" :class="{ 'is-collapsed': styleList[i].isCollapsed }">
+                      <div class="RichContent RichContent--unescapable" :class="{ 'is-collapsed': currentIndex !== index}">
                         <!-- 回答内容 -->
                         <div class="RichContent-inner">
-                          <span class="RichText ztext CopyrightRichText-richText" itemprop="text">
-                            <p>16年去UCB做暑研，面签时候前面一个人被秒拒，拿着I-20瑟瑟发抖。</p><p>然后签证官问我去哪，我说UCB。然后签证官说congratulations。就过了……</p><p class="ztext-empty-paragraph"><br></p><p>18年办研究生签的时候，居然还是同一个签证官，自信心满满的过去，签证官又问我啥学校，我说Tufts。然后又问我啥专业，我说EE。就被check了。。。。</p>
-                          </span>
+                          <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="item.content"></span>
                         </div>
                         <!-- 展开阅读全文 -->
                         <button 
-                          v-show="styleList[i].isCollapsed"
+                          v-if="currentIndex !== index"
                           type="button"
                           class="Button ContentItem-rightButton ContentItem-expandButton Button--plain"
-                          @click="handleExpandAndCollapseText(i)">
+                          @click="currentIndex = index">
                           展开阅读全文
                           <span style="display: inline-flex; align-items: center;">​
                             <svg-icon icon-class="arrow-down"></svg-icon>
@@ -169,7 +183,7 @@
                         <!-- 其他操作 -->
                         <div
                           class="ContentItem-actions"
-                          :class="{ 'Sticky': styleList[i].isSticky, 'RichContent-actions': styleList[i].isRichContentActions, 'is-fixed': styleList[i].isFixed, 'is-bottom': styleList[i].isBottom, 'specialContentItem-actions': styleList[i].isSpecialContentItemActions}"
+                          :class="{ 'Sticky': currentIndex === index, 'RichContent-actions': currentIndex === index, 'is-fixed': currentIndex === index, 'is-bottom': currentIndex === index, 'specialContentItem-actions': currentIndex === index}"
                           style="height: 54px;">
                           <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                             <span style="display: inline-flex; align-items: center;">​
@@ -190,13 +204,13 @@
                             喜欢
                           </button>
                           <button 
-                            v-show="styleList[i].isCollapsedTextActive"
+                            v-if="currentIndex === index"
                             type="button"
                             class="Button ContentItem-action ContentItem-rightButton Button--plain"
-                            @click="handleExpandAndCollapseText(i)">
+                            @click="currentIndex = -1">
                             <span class="RichContent-collapsedText">收起</span>
                             <span style="display: inline-flex; align-items: center;">​
-                              <svg-icon icon-class="arrow-down" class="ContentItem-arrowIcon" :class="{'is-active': styleList[i].isCollapsedTextActive}"></svg-icon>
+                              <svg-icon icon-class="arrow-down" class="ContentItem-arrowIcon" :class="{'is-active': currentIndex === index}"></svg-icon>
                             </span>
                           </button>
                         </div>
@@ -216,7 +230,7 @@
 import Editor from '@/components/Editor'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import { getQuestion } from '@/api/question'
-import { escapeStringHTML } from '@/utils/filters'
+import { listAnswer} from '@/api/answer'
 
 export default {
   components: {
@@ -225,23 +239,29 @@ export default {
   },
   data () {
     return {
+      // 活动的列表项索引
+      currentIndex: -1,
       answerAdd: false,
-      // isCollapsed: true,
-      // isSticky: false,
-      // isRichContentActions: false,
-      // isFixed: false,
-      // isBottom: false,
-      // isCollapsedTextActive: false,
-      // isSpecialContentItemActions: false,
       // 问题内容是否折叠
       questionRichTextCollapsed: false,
-      // 回答列表排序方式
-      sortType: 1,
-      answerList: [1, 2, 3, 4, 5],
-      // 回答列表对应的样式
-      styleList: [],
+      // 编辑框是否全屏
+      isFullScreen: false,
+      answerList: [
+        {
+          "id": 123,
+          "content": "<p>16年去UCB做暑研，面签时候前面一个人被秒拒，拿着I-20瑟瑟发抖。</p><p>然后签证官问我去哪，我说UCB。然后签证官说congratulations。就过了……</p><p class=\"ztext-empty-paragraph\"><br></p><p>18年办研究生签的时候，居然还是同一个签证官，自信心满满的过去，签证官又问我啥学校，我说Tufts。然后又问我啥专业，我说EE。就被check了。。。。</p>",
+          "createTime": "2020-01-01 15:30",
+          "user": {
+              "id": 234,
+              "name": "小小猪排酱中游",
+              "job":  "Java开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+          }
+        }    
+      ],
       // 问题
       question: {
+        "id": 381161861,
         title: '为什么美国疫情这么严重?',
         // content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>',
         content: '### 第一点',
@@ -256,12 +276,19 @@ export default {
       // 回答表单
       answerForm: {
         content: ''
+      },
+      queryParam: {
+        questionId: undefined,
+        // 回答列表排序方式
+        sort: 1,
+        startIndex: 0,
+        num: 5
       }
     }
   },
   created () {
-    this.initStyleList()
     this.getQuestionById()
+    this.getAnswersByParam()
   },
   methods: {
     // 获取问题详情
@@ -269,47 +296,21 @@ export default {
       getQuestion(this.$route.query.questionId).then(response => {
         console.log(response)
         this.question = response.data
-        this.question.content = escapeStringHTML(this.question.content)
+        this.question.content = this.escapeStringHTML(this.question.content)
+        this.queryParam.questionId = this.question.id
       })
     },
-    initStyleList() {
-      var temp = {
-        isCollapsed: true,
-        isSticky: false,
-        isRichContentActions: false,
-        isFixed: false,
-        isBottom: false,
-        isCollapsedTextActive: false,
-        isSpecialContentItemActions: false,
-      }
-      for(var i in this.answerList) {
-        this.styleList.push(temp)
-      }
-      console.log('初始样式', this.styleList)
-    },
-    // 折叠或展开问题内容
-    handleExpandAndCollapseQuestionRichText () {
-      this.questionRichTextCollapsed = !this.questionRichTextCollapsed
-    },
-    // 折叠或展开回答内容
-    handleExpandAndCollapseText (index) {
-      this.styleList[index].isCollapsed = !this.styleList[index].isCollapsed
-      this.styleList[index].isSticky = !this.styleList[index].isSticky
-      this.styleList[index].isRichContentActions = !this.styleList[index].isRichContentActions
-      this.styleList[index].isFixed = !this.styleList[index].isFixed
-      this.styleList[index].isBottom = !this.styleList[index].isBottom
-      this.styleList[index].isCollapsedTextActive = !this.styleList[index].isCollapsedTextActive
-      this.styleList[index].isSpecialContentItemActions = !this.styleList[index].isSpecialContentItemActions
-      console.log('展开或收起', index)
-      this.styleList.forEach(item => {
-        console.log('是否展开', item.isCollapsed)
+    getAnswersByParam () {
+      listAnswer(this.queryParam).then(response => {
+        console.log(response.data)
+        this.answerList = response.data
+        this.answerList.forEach(item => {
+          item.content = this.escapeStringHTML(item.content)
+        })
       })
     },
     handleSubmitAnswer () {
       console.log(this.answerForm)
-    },
-    handleContentChange (content) {
-      this.answerForm.content = content
     }
   }
 }
@@ -445,6 +446,15 @@ export default {
 }
 .NumberBoard {
   display: flex;
+  flex-direction: column;
+}
+.NumberBoard-header {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.NumberBoard-footer {
+  display: flex;
 }
 .QuestionFollowStatus-counts {
     width: 240px;
@@ -452,15 +462,17 @@ export default {
 }
 .NumberBoard-item {
     -webkit-box-flex: 1;
-    -ms-flex: 1 1;
     flex: 1 1;
 }
-.NumberBoard--divider .NumberBoard-item+.NumberBoard-item .NumberBoard-itemInner {
+.NumberBoard--divider .NumberBoard-header .NumberBoard-item+.NumberBoard-item .NumberBoard-itemInner {
     border-left: 1px solid #ebebeb;
 }
 .NumberBoard-itemInner {
-    text-align: center;
-    line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1.6;
 }
 .QuestionFollowStatus-counts .NumberBoard-itemInner {
     padding: 0 8px;
@@ -511,7 +523,7 @@ export default {
     align-items: center;
     height: 50px;
     margin: 0 20px;
-    border-bottom: 1px solid #f6f6f6;
+    // border-bottom: 1px solid #f6f6f6;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
@@ -675,5 +687,11 @@ export default {
     height: 52px;
     padding: 12px 24px;
     box-sizing: border-box;
+}
+
+.is-write-answer-footer-fixed {
+  position: fixed;
+  z-index: 2000;
+  bottom: 0px;
 }
 </style>
