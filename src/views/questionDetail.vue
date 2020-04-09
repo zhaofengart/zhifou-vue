@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-backtop style="z-index: 10000;" :bottom="100"></el-backtop>
     <IndexHeader></IndexHeader>
     <div class="main">
       <div class="QuestionPage">
@@ -32,38 +33,22 @@
             <!-- 右边的信息 -->
             <div class="QuestionHeader-side">
               <div class="NumberBoard QuestionFollowStatus-counts NumberBoard--divider">
-                <div class="NumberBoard-header">
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <el-avatar shape="circle" size="large" :src="question.author.avatar"></el-avatar>
-                    </div>
-                  </div>
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.answeredNum}}</strong>
-                    </div>
-                  </div>
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <strong class="NumberBoard-itemValue" :title="question.viewedNum">{{question.viewedNum}}</strong>
-                    </div>
+                <div class="NumberBoard-item">
+                  <div class="NumberBoard-itemInner">
+                    <el-avatar shape="circle" size="large" :src="question.author.avatar"></el-avatar>
+                    <div class="NumberBoard-itemName">{{question.author.name}}</div>
                   </div>
                 </div>
-                <div class="NumberBoard-footer">
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <div class="NumberBoard-itemName">{{question.author.name}}</div>
-                    </div>
+                <div class="NumberBoard-item">
+                  <div class="NumberBoard-itemInner">
+                    <strong class="NumberBoard-itemValue" :title="question.viewedNum" style="margin-top: 7px;">{{question.answeredNum}}</strong>
+                    <div class="NumberBoard-itemName" style="margin-top: 11px;">被回答</div>
                   </div>
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <div class="NumberBoard-itemName">被回答</div>
-                    </div>
-                  </div>
-                  <div class="NumberBoard-item">
-                    <div class="NumberBoard-itemInner">
-                      <div class="NumberBoard-itemName">浏览量</div>
-                    </div>
+                </div>
+                <div class="NumberBoard-item">
+                  <div class="NumberBoard-itemInner">
+                    <strong class="NumberBoard-itemValue" :title="question.viewedNum" style="margin-top: 7px;">{{question.viewedNum}}</strong>
+                    <div class="NumberBoard-itemName" style="margin-top: 11px;">浏览量</div>
                   </div>
                 </div>
               </div>
@@ -107,7 +92,7 @@
                       <!-- 写回答头部 -->
                       <div class="AnswerAdd-header">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="square" size="large"></el-avatar>
+                          <el-avatar shape="circle" size="large" src="https://pic4.zhimg.com/da8e974dc_is.jpg"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
                               <span class="AuthorInfo-name">小小猪排酱中游</span>
@@ -138,19 +123,19 @@
                 <el-card>
                   <!-- 回答头部 -->
                   <div slot="header" class="List-header">
-                    <el-radio-group v-model="queryParam.sort">
+                    <el-radio-group v-model="queryParam.sort" @change="getAnswersByParam">
                       <el-radio :label="1">按热度排序</el-radio>
                       <el-radio :label="2">按时间排序</el-radio>
-                    </el-radio-group>s
+                    </el-radio-group>
                   </div>
 
                   <!-- 回答内容列表 -->
-                  <div class="List-item" v-for="(item, index) in answerList" :key="item.id" >
+                  <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
                     <div class="ContentItem AnswerItem">
                       <!-- 回答者信息及回答时间 -->
                       <div class="ContentItem-meta">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="square" size="large" :src="item.user.avatar"></el-avatar>
+                          <el-avatar shape="circle" size="large" :src="item.user.avatar"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
                               <span class="AuthorInfo-name">{{item.user.name}}</span>
@@ -174,7 +159,7 @@
                           v-if="currentIndex !== index"
                           type="button"
                           class="Button ContentItem-rightButton ContentItem-expandButton Button--plain"
-                          @click="currentIndex = index">
+                          @click="handleExpandContent(index)">
                           展开阅读全文
                           <span style="display: inline-flex; align-items: center;">​
                             <svg-icon icon-class="arrow-down"></svg-icon>
@@ -183,7 +168,7 @@
                         <!-- 其他操作 -->
                         <div
                           class="ContentItem-actions"
-                          :class="{ 'Sticky': currentIndex === index, 'RichContent-actions': currentIndex === index, 'is-fixed': currentIndex === index, 'is-bottom': currentIndex === index, 'specialContentItem-actions': currentIndex === index}"
+                          :class="{ 'Sticky': currentIndex === index, 'RichContent-actions': currentIndex === index, 'is-fixed': currentIndex === index && isContentActionsFixed , 'is-bottom': currentIndex === index, 'specialContentItem-actions': currentIndex === index}"
                           style="height: 54px;">
                           <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                             <span style="display: inline-flex; align-items: center;">​
@@ -224,6 +209,7 @@
         </div>
       </div>
     </div>
+    
   </div>
 </template>
 <script>
@@ -244,6 +230,7 @@ export default {
       answerAdd: false,
       // 问题内容是否折叠
       questionRichTextCollapsed: false,
+      isContentActionsFixed: true,
       // 编辑框是否全屏
       isFullScreen: false,
       answerList: [
@@ -290,11 +277,14 @@ export default {
     this.getQuestionById()
     this.getAnswersByParam()
   },
+  mounted () {
+    window.addEventListener('scroll', this.handleScroll)
+  },
   methods: {
     // 获取问题详情
     getQuestionById () {
       getQuestion(this.$route.query.questionId).then(response => {
-        console.log(response)
+        // console.log(response)
         this.question = response.data
         this.question.content = this.escapeStringHTML(this.question.content)
         this.queryParam.questionId = this.question.id
@@ -302,7 +292,7 @@ export default {
     },
     getAnswersByParam () {
       listAnswer(this.queryParam).then(response => {
-        console.log(response.data)
+        // console.log(response.data)
         this.answerList = response.data
         this.answerList.forEach(item => {
           item.content = this.escapeStringHTML(item.content)
@@ -311,6 +301,31 @@ export default {
     },
     handleSubmitAnswer () {
       console.log(this.answerForm)
+    },
+    handleScroll () {
+      // 获取需要判断顶部和底部到浏览器底部距离的元素
+      var item = this.$refs.answerItem[this.currentIndex]
+      // 元素本身的高度和它到父元素顶部的高度
+      var H = item.offsetHeight + item.offsetTop
+      // 滚动距离界限1,超过这个距离，所选元素的底部就会位于浏览器底部以上
+      var scrollHeightToBottom = H - document.documentElement.clientHeight + 54
+      // 滚动距离界限2,小于这个距离，所选元素的顶部就会位于浏览器底部以下
+      var scrollHeightToTop = item.offsetTop - document.documentElement.clientHeight + 100
+      // 由于滚动而被隐藏的高度
+      var hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+
+      // 元素的底部或顶部已经到达浏览器底部
+      if ((hiddenHeight >= scrollHeightToBottom) || (hiddenHeight < scrollHeightToTop)) {
+        this.isContentActionsFixed = false
+      } else {
+        // 介于两者之间，需要固定操作栏
+        this.isContentActionsFixed = true
+      }
+    },
+    handleExpandContent (index) {
+      this.currentIndex = index
+      // 延迟执行边界判断，防止handleScroll方法读取到渲染之前的元素高度
+      setTimeout(this.handleScroll, 100)
     }
   }
 }
@@ -446,15 +461,6 @@ export default {
 }
 .NumberBoard {
   display: flex;
-  flex-direction: column;
-}
-.NumberBoard-header {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 6px;
-}
-.NumberBoard-footer {
-  display: flex;
 }
 .QuestionFollowStatus-counts {
     width: 240px;
@@ -464,13 +470,10 @@ export default {
     -webkit-box-flex: 1;
     flex: 1 1;
 }
-.NumberBoard--divider .NumberBoard-header .NumberBoard-item+.NumberBoard-item .NumberBoard-itemInner {
+.NumberBoard--divider .NumberBoard-item+.NumberBoard-item .NumberBoard-itemInner {
     border-left: 1px solid #ebebeb;
 }
 .NumberBoard-itemInner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   text-align: center;
   line-height: 1.6;
 }
@@ -547,7 +550,7 @@ export default {
     overflow: hidden;
 }
 .RichContent.is-collapsed .RichContent-inner {
-    max-height: 100px;
+    max-height: 200px;
 }
 .ContentItem-rightButton {
     margin-left: auto;
