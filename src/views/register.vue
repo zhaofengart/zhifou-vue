@@ -2,20 +2,26 @@
   <div class="login">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="login-form" label-width="80px">
       <h3 class="title">知否注册</h3>
-      <el-form-item prop="username" label="工号">
-        <el-input v-model="registerForm.username" type="text" auto-complete="off">
+      <el-form-item prop="workNum" label="工号">
+        <el-input v-model="registerForm.workNum" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
-      <el-form-item prop="department" label="部门">
-        <el-input v-model="registerForm.department" type="text" auto-complete="off">
+      <el-form-item prop="name" label="姓名">
+        <el-input v-model="registerForm.name" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
-      <el-form-item prop="job" label="岗位">
-        <el-input v-model="registerForm.job" type="text" auto-complete="off">
-        </el-input>
+      <el-form-item prop="departmentId" label="部门">
+        <el-select v-model="registerForm.departmentId">
+          <el-option v-for="item in deptList" :key="item.id" :label="item.departmentName" :value="item.id"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item prop="mail" label="邮箱">
-        <el-input v-model="registerForm.mail" type="text" auto-complete="off">
+      <el-form-item prop="jobId" label="岗位">
+        <el-select v-model="registerForm.jobId">
+          <el-option v-for="item in jobList" :key="item.id" :label="item.jobName" :value="item.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="email" label="邮箱">
+        <el-input v-model="registerForm.email" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
       <el-row :gutter="20">
@@ -76,35 +82,48 @@
 
 <script>
 import { Message } from 'element-ui'
+import { listDept } from '@/api/dept'
+import { listJob } from '@/api/job'
+import { getCode, register } from '@/api/login'
 
 export default {
   name: "Register",
   data() {
     return {
-      codeUrl: "",
+      deptList: [],
+      jobList: [],
       codeText: '发送验证码',
       disabledCodeBtn: true,
       registerForm: {
-        username: '',
+        workNum: '',
         name: '',
-        department: '',
-        job: '',
-        mail: '',
+        departmentId: '',
+        jobId: '',
+        email: '',
         code: '',
         password: '',
         confimrPassword: ''
       },
       registerRules: {
-        username: [
-          { required: true, trigger: 'blur', message: '工号不能为空' }
+        workNum: [
+          { required: true, trigger: 'blur', message: '工号不能为空' },
+          {
+            pattern: /^S[0-9]{4}$/,
+            message: "工号不符合规范",
+            trigger: "blur"
+          }
         ],
-        department: [
+        name: [
+          { required: true, trigger: 'blur', message: '姓名不能为空' },
+          { max: 15, message: '姓名不能超过15个汉字', trigger: 'blur'},
+        ],
+        departmentId: [
           { required: true, trigger: 'blur', message: '部门不能为空' }
         ],
-        job: [
+        jobId: [
           { required: true, trigger: 'blur', message: '岗位不能为空' }
         ],
-        mail: [
+        email: [
           { required: true, message: '邮箱地址不能为空', trigger: 'blur' },
           {
             type: 'email',
@@ -140,19 +159,41 @@ export default {
   watch: {
   },
   created () {
+    this.getDeptList()
+    this.getJobList()
   },
   methods: {
+    // 获取部门
+    getDeptList () {
+      listDept().then(response => {
+        this.deptList = response.data
+      })
+    },
+    // 获取岗位
+    getJobList () {
+      listJob().then(response => {
+        this.jobList = response.data
+      })
+    },
     handleRegister () {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           Message.success({message: '你点击了注册按钮'})
-          this.$router.push({path: 'login'})
+          register(this.registerForm, this.registerForm.code).then(response => {
+            this.$router.push({path: 'login'})
+          })
         }
       })
     },
     handleGetCode () {
-      this.countDown(60)
-      Message.success({message: '你点击了获取验证码按钮'})
+      // 对邮箱进行单独验证
+      this.$refs.registerForm.validateField('email', (error => {
+        if (!error) {
+          this.countDown(60)
+          console.log(this.registerForm.email)
+          getCode(this.registerForm.email)
+        }
+      }))
     },
     // 发送验证码倒计时
     countDown (time) {

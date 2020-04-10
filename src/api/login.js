@@ -30,9 +30,26 @@ export function logout () {
 }
 
 // 获取验证码
-export function getCodeImg () {
+export function getCode (email) {
+  const data = {
+    email
+  }
   return request({
-    url: '/captchaImage',
-    method: 'get'
+    url: '/sendEmail',
+    method: 'post',
+    params: data
+  })
+}
+
+// 注册
+export function register (form, code) {
+  const params = {
+    code
+  }
+  return request({
+    url: '/register',
+    method: 'post',
+    params: params,
+    data: form
   })
 }
