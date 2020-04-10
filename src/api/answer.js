@@ -7,3 +7,11 @@ export function listAnswer (query) {
     params: query
   })
 }
+
+export function addAnswer (data) {
+  return request({
+    url: '/answer/add',
+    method: 'post',
+    data: data
+  })
+}

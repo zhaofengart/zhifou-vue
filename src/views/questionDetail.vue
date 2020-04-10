@@ -14,8 +14,8 @@
                   <div class="QuestionRichText QuestionRichText--expandable" :class="{'QuestionRichText--collapsed': questionRichTextCollapsed}">
                     <div>
                       <span class="RichText ztext" v-html="question.content"></span>
-                      <button
-                        v-show="questionRichTextCollapsed" type="button"
+                      <!-- <button
+                        v-if="questionRichTextCollapsed" type="button"
                         class="Button QuestionRichText-more Button--plain"
                         @click="questionRichTextCollapsed = !questionRichTextCollapsed">显示全部 
                         <span style="display: inline-flex; align-items: center;">
@@ -23,7 +23,7 @@
                             <path d="M12 13L8.285 9.218a.758.758 0 0 0-1.064 0 .738.738 0 0 0 0 1.052l4.249 4.512a.758.758 0 0 0 1.064 0l4.246-4.512a.738.738 0 0 0 0-1.052.757.757 0 0 0-1.063 0L12.002 13z" fill-rule="evenodd"></path>
                           </svg>
                         </span>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
@@ -67,9 +67,9 @@
                     <svg-icon icon-class="invite" style="margin-right: 5px;"></svg-icon>邀请回答
                   </el-button>
                 </div>
-                <div v-show="!questionRichTextCollapsed" class="QuestionHeader-actions">
+                <div class="QuestionHeader-actions">
                   <button type="button" class="Button Button-plain" @click="questionRichTextCollapsed = !questionRichTextCollapsed">
-                    收起
+                    {{questionRichTextCollapsed? '显示全部': '收起'}}
                     <span style="display: inline-flex; align-items: center;">​
                       <svg-icon icon-class="arrow-up"></svg-icon>
                     </span>
@@ -135,17 +135,17 @@
                       <!-- 回答者信息及回答时间 -->
                       <div class="ContentItem-meta">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="circle" size="large" :src="item.user.avatar"></el-avatar>
+                          <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
-                              <span class="AuthorInfo-name">{{item.user.name}}</span>
+                              <span class="AuthorInfo-name">{{item.author.name}}</span>
                             </div>
                             <div class="AuthorInfo-job">
-                              <span>{{item.user.job}}</span>
+                              <span>{{item.author.job}}</span>
                             </div>
                           </div>
                           <div class="publishTime">
-                            <span>{{item.createTime}}</span>
+                            <span>{{parseTime(item.createTime)}}</span>
                           </div>
                         </div>
                       </div>
@@ -216,7 +216,7 @@
 import Editor from '@/components/Editor'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import { getQuestion } from '@/api/question'
-import { listAnswer} from '@/api/answer'
+import { listAnswer, addAnswer} from '@/api/answer'
 
 export default {
   components: {
@@ -238,7 +238,7 @@ export default {
           "id": 123,
           "content": "<p>16年去UCB做暑研，面签时候前面一个人被秒拒，拿着I-20瑟瑟发抖。</p><p>然后签证官问我去哪，我说UCB。然后签证官说congratulations。就过了……</p><p class=\"ztext-empty-paragraph\"><br></p><p>18年办研究生签的时候，居然还是同一个签证官，自信心满满的过去，签证官又问我啥学校，我说Tufts。然后又问我啥专业，我说EE。就被check了。。。。</p>",
           "createTime": "2020-01-01 15:30",
-          "user": {
+          "author": {
               "id": 234,
               "name": "小小猪排酱中游",
               "job":  "Java开发",
@@ -262,6 +262,7 @@ export default {
       },
       // 回答表单
       answerForm: {
+        questionId: undefined,
         content: ''
       },
       queryParam: {
@@ -275,7 +276,6 @@ export default {
   },
   created () {
     this.getQuestionById()
-    this.getAnswersByParam()
   },
   mounted () {
     window.addEventListener('scroll', this.handleScroll)
@@ -284,10 +284,13 @@ export default {
     // 获取问题详情
     getQuestionById () {
       getQuestion(this.$route.query.questionId).then(response => {
-        // console.log(response)
+        // console.log(response.data)
         this.question = response.data
         this.question.content = this.escapeStringHTML(this.question.content)
         this.queryParam.questionId = this.question.id
+        this.answerForm.questionId = this.question.id
+        // 确保先取到问题再获取对应的回答
+        this.getAnswersByParam()
       })
     },
     getAnswersByParam () {
@@ -299,9 +302,17 @@ export default {
         })
       })
     },
+    // 提交回答
     handleSubmitAnswer () {
       console.log(this.answerForm)
+      if (this.answerForm.content !== '') {
+        // addAnswer(this.answerForm).then(response => {
+        //   this.answerAdd = false
+        //   this.getQuestionById()
+        // })
+      }
     },
+    // 监听滚动
     handleScroll () {
       // 获取需要判断顶部和底部到浏览器底部距离的元素
       var item = this.$refs.answerItem[this.currentIndex]
@@ -384,6 +395,9 @@ export default {
 }
 .QuestionRichText--expandable.QuestionRichText--collapsed .RichText {
     pointer-events: none;
+    -webkit-line-clamp: 2; 
+    white-space: nowrap;
+    // text-overflow: ellipsis;
 }
 .QuestionRichText {
     font-size: 15px;

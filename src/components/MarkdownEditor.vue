@@ -44,7 +44,7 @@ export default {
     // 将图片上传到服务器，返回地址替换到md中
     $imgAdd(pos, $file){
         let formdata = new FormData();
-        formdata.append('image', $file)
+        formdata.append('file', $file)
 
         upload(formdata).then(res => {
             console.log(res.data);
@@ -57,6 +57,7 @@ export default {
     change(value, render){
         // render 为 markdown 解析后的结果[html]
         this.html = render;
+        this.content = value
         this.$emit('update:content', this.content)
     },
     // 处理切换全屏后的方法

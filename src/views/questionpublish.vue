@@ -24,6 +24,7 @@
   </div>
 </template>
 <script>
+import { Notification, MessageBox, Message } from 'element-ui'
 import { addQuestion, recommendQuestion } from '@/api/question'
 
 import IndexHeader from '@/components/IndexHeader'
@@ -83,7 +84,10 @@ export default {
         if (valid) {
           console.log('校验成功')
           console.log(this.form)
-          addQuestion(this.form)
+          // addQuestion(this.form).then(response => {
+          //   Message.success("发布成功")
+          //   this.$router.push({path: 'index2'})
+          // })
         }
       })
     },
