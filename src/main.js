@@ -15,6 +15,7 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import '@/assets/styles/zhifou.scss' // zhifou.css
 
 import './assets/icons' // icon
+// import './permission' // permission control
 
 import { parseTime, resetForm, addDateRange, download } from '@/utils/ruoyi'
 import { escapeStringHTML } from '@/utils/filters'
@@ -36,11 +37,6 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 Vue.prototype.escapeStringHTML = escapeStringHTML
-
-router.beforeEach((to, from, next) => {
-  window.document.title = to.meta.title
-  next()
-})
 
 /* eslint-disable no-new */
 new Vue({
