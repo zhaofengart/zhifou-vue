@@ -286,7 +286,8 @@ export default {
       getQuestion(this.$route.query.questionId).then(response => {
         // console.log(response.data)
         this.question = response.data
-        this.question.content = this.escapeStringHTML(this.question.content)
+        // this.question.content = this.escapeStringHTML(this.question.content)
+        this.question.content = this.mdToHtml(this.question.content)
         this.queryParam.questionId = this.question.id
         this.answerForm.questionId = this.question.id
         // 确保先取到问题再获取对应的回答
@@ -298,7 +299,7 @@ export default {
         // console.log(response.data)
         this.answerList = response.data
         this.answerList.forEach(item => {
-          item.content = this.escapeStringHTML(item.content)
+          item.content = this.mdToHtml(item.content)
         })
       })
     },

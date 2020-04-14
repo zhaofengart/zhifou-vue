@@ -6,6 +6,7 @@
 <script>
 // 导入组件 及 组件样式
 import { mavonEditor } from 'mavon-editor'
+mavonEditor.getMarkdownIt().set({breaks: false})
 import 'mavon-editor/dist/css/index.css'
 import { upload } from '@/api/common'
 
