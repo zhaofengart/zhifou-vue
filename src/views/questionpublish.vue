@@ -6,6 +6,24 @@
         <el-form ref="form" :model="form" :rules="rules">
           <el-form-item prop="title">
             <el-input v-model="form.title" :placeholder="titlePlaceholder" @input="handleRecommendQuestion"></el-input>
+            <el-table
+              v-if="showRecommendQuestion"
+              :data="recommendQuestionList"
+              stripe
+              height="300"
+              class="RecommendQuestionList">
+              <el-table-column>
+                <template slot="header">
+                  <div class="RecommendQuestion-header">
+                    <span>你的问题可能已有答案</span>
+                    <el-button type="text" @click="showRecommendQuestion = false">关闭</el-button>
+                  </div>
+                </template>
+                <template slot-scope="scope">
+                  <router-link :to="{path: '/question', query: {questionId: scope.row.id}}">{{scope.row.title}}</router-link>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-form-item>
           <el-form-item>
             <div class="contentEditor">
@@ -41,6 +59,8 @@ export default {
     return {
       // 是否全屏，如果是，则编辑框不需要设置高度，如果不是，则需要设置高度
       isFullScreen: false,
+      showRecommendQuestion: false,
+      recommendQuestionList: [],
       titlePlaceholder: '写下你的问题，请以“？”结尾',
       contentPlaceholder: '输入问题背景、条件等详细信息（选填）',
       // 表单参数
@@ -94,6 +114,10 @@ export default {
     handleRecommendQuestion () {
       recommendQuestion(this.form.title).then(resp => {
         console.log(resp)
+        if (resp.data.length !== 0) {
+          this.recommendQuestionList = resp.data
+          this.showRecommendQuestion = true
+        }
       })
     },
     handleFullScreenChange (isFull) {
@@ -124,5 +148,14 @@ export default {
   // margin-top: 80px;
   margin-bottom: 0;
 }
-
+.RecommendQuestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.RecommendQuestionList {
+  width: 475px;
+  position: fixed;
+  z-index: 2000;
+}
 </style>

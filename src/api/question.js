@@ -10,8 +10,11 @@ export function addQuestion (data) {
 
 export function recommendQuestion (title) {
   return request({
-    url: '/question/title/like/' + title,
-    method: 'get'
+    url: '/question/title/like',
+    method: 'get',
+    params: {
+      title
+    }
   })
 }
 

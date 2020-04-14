@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mavon-editor v-model="content" ref="md" @imgAdd="$imgAdd" @change="change" @fullScreen="handleSwitchFullScreen" :placeholder="placeholder" class="mavonEditor"/>
+    <mavon-editor v-model="content" ref="md" codeStyle="atom-one-light" @imgAdd="$imgAdd" @change="change" @fullScreen="handleSwitchFullScreen" :placeholder="placeholder" class="mavonEditor"/>
   </div>
 </template>
 <script>
@@ -8,6 +8,7 @@
 import { mavonEditor } from 'mavon-editor'
 mavonEditor.getMarkdownIt().set({breaks: false})
 import 'mavon-editor/dist/css/index.css'
+import 'highlight.js/styles/atom-one-dark.css'
 import { upload } from '@/api/common'
 
 export default {
