@@ -1,20 +1,20 @@
 <template>
-  <div class="login">
-    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="login-form" label-width="110px">
+  <div class="findPassword">
+    <el-form ref="findPasswordForm" :model="findPasswordForm" :rules="findPasswordRules" class="findPassword-form" label-width="110px">
       <h3 class="title">找回密码</h3>
-      <el-form-item prop="username" label="工号">
-        <el-input v-model="registerForm.username" type="text" auto-complete="off">
+      <el-form-item prop="workname" label="工号">
+        <el-input v-model="findPasswordForm.workname" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
       <el-form-item prop="mail" label="邮箱">
-        <el-input v-model="registerForm.mail" type="text" auto-complete="off">
+        <el-input v-model="findPasswordForm.mail" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
       <el-row :gutter="20">
         <el-col :span="16">
           <el-form-item prop="code" label="验证码">
             <el-input
-              v-model="registerForm.code"
+              v-model="findPasswordForm.code"
               auto-complete="off"
             >
             </el-input>
@@ -27,14 +27,14 @@
             type="primary"
             style="width:100%;"
             @click.native.prevent="handleGetCode"
-          >
-            <span v-if="!codeLoading">发送验证码</span>
+            :disabled="!disabledCodeBtn">
+            <span>{{codeText}}</span>
           </el-button>
         </el-col>
       </el-row>
-      <el-form-item prop="password" label="重新设置密码">
+      <el-form-item prop="password" label="新密码">
         <el-input
-          v-model="registerForm.password"
+          v-model="findPasswordForm.password"
           type="password"
           auto-complete="off"
         >
@@ -42,7 +42,7 @@
       </el-form-item>
       <el-form-item prop="confirmPassword"  label="确认新密码">
         <el-input
-          v-model="registerForm.confirmPassword"
+          v-model="findPasswordForm.confirmPassword"
           type="password"
           auto-complete="off"
         >
@@ -54,7 +54,7 @@
           size="medium"
           type="primary"
           style="width:100%;"
-          @click.native.prevent="handleRegister"
+          @click.native.prevent="handlefindPassword"
         >
           <span v-if="!loading">确认</span>
         </el-button>
@@ -69,21 +69,24 @@
 
 <script>
   import { Message } from 'element-ui'
+  import { getCode,findPassword } from "@/api/login"
 
   export default {
     name: "Register",
     data() {
       return {
         codeUrl: "",
-        registerForm: {
-          username: '',
+        codeText: '发送验证码',
+        disabledCodeBtn: true,
+        findPasswordForm: {
+          workname: '',
           mail: '',
           code: '',
           password: '',
           confimrPassword: ''
         },
-        registerRules: {
-          username: [
+        findPasswordRules: {
+          workname: [
             { required: true, trigger: 'blur', message: '工号不能为空' }
           ],
           mail: [
@@ -98,7 +101,17 @@
             { required: true, trigger: 'blur', message: '密码不能为空' }
           ],
           confirmPassword: [
-            { required: true, trigger: 'blur', message: '确认密码不能为空' }
+            { required: true, trigger: 'blur', message: '确认密码不能为空' },
+            { validator: (rule, value, callback) => {
+                if(value === ''){
+                  callback(new Error('请再次输入密码'))
+                }else if(value !== this.findPasswordForm.password){
+                  callback(new Error('两次输入密码不一致'))
+                }else{
+                  callback( )
+                }
+              }, trigger: ['blur', 'change']
+            }
           ],
           code: [
             { required: true, trigger: 'change', message: '验证码不能为空' }
@@ -114,24 +127,47 @@
     created () {
     },
     methods: {
-      handleRegister () {
-        this.$refs.registerForm.validate(valid => {
+      handlefindPassword () {
+        this.$refs.findPasswordForm.validate(valid => {
           if (valid) {
             Message.success({message: '密码修改成功！'})
-            this.$router.push({path: 'login'})
+            findPassword(this.findPasswordForm, this.findPasswordForm.code).then(response => {
+              this.$router.push({path: 'login'})
+            })
           }
         })
       },
       handleGetCode () {
-        Message.success({message: '你点击了获取验证码按钮'})
-        this.codeLoading = true
+        // 对邮箱进行单独验证
+        this.$refs.findPasswordForm.validateField('mail', (error => {
+          if (!error) {
+            this.countDown(60)
+            console.log(this.findPasswordForm.mail)
+            getCode(this.findPasswordForm.mail)
+          }
+        }))
+      },
+      // 发送验证码倒计时
+      countDown (time) {
+        if (time === 0) {
+          this.disabledCodeBtn = true
+          this.codeText = "发送验证码"
+          return
+        } else {
+          this.disabledCodeBtn = false;
+          this.codeText = '重新发送(' + time + ')'
+          time--
+        }
+        setTimeout(()=> {
+          this.countDown(time)
+        }, 1000)
       }
     }
   }
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-  .login {
+  .findPassword {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -146,7 +182,7 @@
     color: #707070;
   }
 
-  .login-form {
+  .findPassword-form {
     border-radius: 6px;
     background: #ffffff;
     width: 400px;

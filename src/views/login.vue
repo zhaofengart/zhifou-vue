@@ -60,6 +60,7 @@
 
 <script>
   import { Message } from 'element-ui'
+  import {login} from '@/api/login'
 
   export default {
     name: "login",
@@ -85,8 +86,8 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
               this.loading = true;
-              this.$store.dispatch("Login", this.loginForm)
-              .then(() => {
+              login(loginForm.username,loginForm.password)
+              .then(response => {
                 this.$router.push({path: 'index2'})
               })
               .catch(() => {

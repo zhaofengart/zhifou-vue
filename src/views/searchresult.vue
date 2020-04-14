@@ -11,7 +11,7 @@
             <div class="Topstory-mainColumnCard">
               <el-card>
                 <!-- 文章列表 -->
-                <div class="Topstory-recommend">
+                <div class="Topstory-recommend" style="display: flex;flex-direction: column;">
                   <div class="">
                     <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item, index) in coachExplainList" :key="index" style="margin-top: -20px">
                       <h3>
@@ -22,8 +22,9 @@
                         <!--  {{item | explainLen}} 通过数据的filter内部判断来控制展示的字数 -->
                         <!--   v-show="item.coachExplain.length >= 111" 判断开始评论字数（此时字数界限是111），决定显不显示 “全文、收起”按钮 -->
                         {{item | explainLen}}
-                        <a class="btn-pick-up" v-show="item.coachExplain.length >= 50"
-                           @click.stop="togglePickUp(item,$event)">{{item.isExpand?'收起':'...全文'}}</a>
+                        <a class="btn-pick-up" v-show="item.coachExplain.length >= 75"
+                           style="color: #1890ff;"
+                           @click.stop="togglePickUp(item,$event)">{{item.isExpand?'　收起':'　...全文'}}</a>
                       </div>
                     </div>
                   </div>
@@ -129,7 +130,6 @@
           //false
           // 当下收起状态
           target.style.height = "2rem";//收起状态的容器高度
-          //收起状态的高度
 
         }
       }
@@ -139,11 +139,10 @@
         if (!item.coachExplain) return;
         if (item.isExpand) {
           //当下全文状态
-          return item.coachExplain.substr(0, item.coachExplain.length - 1);//字符串截取
+          return item.coachExplain.substr(0, item.coachExplain.length);//字符串截取
         } else {
           // 当下收起状态
-          return item.coachExplain.substr(0, 50);//字符串截取100个字
-
+          return item.coachExplain.substr(0, 75);//字符串截取100个字
         }
       }
     }

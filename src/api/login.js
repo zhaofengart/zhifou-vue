@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login (username, password) {
+export function login (workNum, password) {
   const data = {
-    username,
+    workNum,
     password
   }
   return request({
@@ -48,6 +48,19 @@ export function register (form, code) {
   }
   return request({
     url: '/register',
+    method: 'post',
+    params: params,
+    data: form
+  })
+}
+
+// 找回密码
+export function findPassword (form, code) {
+  const params = {
+    code
+  }
+  return request({
+    url: '/findPassword',
     method: 'post',
     params: params,
     data: form
