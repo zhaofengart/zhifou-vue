@@ -144,7 +144,15 @@ export default {
       this.$router.push({path: 'questionpublish'})
     },
     async logout () {
-      this.$router.push({path: 'login'})
+      this.$confirm('确定注销并退出系统吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('LogOut').then(() => {
+          location.reload()
+        })
+      })
     }
   }
 }

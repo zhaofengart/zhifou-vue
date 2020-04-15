@@ -104,14 +104,18 @@ export default {
         if (valid) {
           console.log('校验成功')
           console.log(this.form)
-          // addQuestion(this.form).then(response => {
-          //   Message.success("发布成功")
-          //   this.$router.push({path: 'index2'})
-          // })
+          addQuestion(this.form).then(response => {
+            Message.success("发布成功")
+            this.$router.push({path: '/'})
+          })
         }
       })
     },
     handleRecommendQuestion () {
+      if (this.form.title.trim().length === 0) {
+        this.showRecommendQuestion = false
+        return
+      }
       recommendQuestion(this.form.title).then(resp => {
         console.log(resp)
         if (resp.data.length !== 0) {

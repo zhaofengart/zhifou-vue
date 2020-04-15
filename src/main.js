@@ -12,6 +12,7 @@ import './assets/styles/element-variables.scss'
 
 import VueHighlightJS from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
+import vueiInfinite from 'vue-infinite-scroll'
 
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
@@ -37,6 +38,7 @@ Vue.component('IndexHeader', IndexHeader)
 
 Vue.use(ElementUI)
 Vue.use(VueHighlightJS)
+Vue.use(vueiInfinite)
 
 Vue.config.productionTip = false
 

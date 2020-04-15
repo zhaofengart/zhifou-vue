@@ -1,6 +1,6 @@
 import router from './router'
-// import store from './store'
-// import { Message } from 'element-ui'
+import store from './store'
+import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
@@ -18,7 +18,19 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      next()
+      if (store.getters.name === '') {
+        // 判断当前用户是否已拉取完user_info信息
+        store.dispatch('GetInfo').then(res => {
+          next({ ...to, replace: true }) // hack方法
+        }).catch(err => {
+          store.dispatch('FedLogOut').then(() => {
+            Message.error(err)
+            next({ path: '/' })
+          })
+        })
+      } else {
+        next()
+      }
     }
   } else {
     // 没有token

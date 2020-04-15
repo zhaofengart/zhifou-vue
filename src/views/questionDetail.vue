@@ -92,13 +92,16 @@
                       <!-- 写回答头部 -->
                       <div class="AnswerAdd-header">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="circle" size="large" src="https://pic4.zhimg.com/da8e974dc_is.jpg"></el-avatar>
+                          <!-- <el-avatar shape="circle" size="large" src="https://pic4.zhimg.com/da8e974dc_is.jpg"></el-avatar> -->
+                          <el-avatar shape="circle" size="large" :src="avatar"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
-                              <span class="AuthorInfo-name">小小猪排酱中游</span>
+                              <!-- <span class="AuthorInfo-name">小小猪排酱中游</span> -->
+                              <span class="AuthorInfo-name">{{name}}</span>
                             </div>
                             <div class="AuthorInfo-job">
-                              <span>Java开发</span>
+                              <!-- <span>Java开发</span> -->
+                              <span>{{job}}</span>
                             </div>
                           </div>
                         </div>
@@ -202,6 +205,10 @@
                       </div>
                     </div>
                   </div>
+                  <!-- <span ref="listBottom"></span> -->
+                  <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="400" infinite-scroll-immediate-check="false">
+                      <!-- <div class="loading">加载中...</div> -->
+                  </div>
                 </el-card>
               </div>
             </div>
@@ -213,6 +220,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import Editor from '@/components/Editor'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import { getQuestion } from '@/api/question'
@@ -225,11 +233,12 @@ export default {
   },
   data () {
     return {
+      busy: false,
       // 活动的列表项索引
       currentIndex: -1,
       answerAdd: false,
       // 问题内容是否折叠
-      questionRichTextCollapsed: false,
+      questionRichTextCollapsed: true,
       isContentActionsFixed: true,
       // 编辑框是否全屏
       isFullScreen: false,
@@ -250,8 +259,8 @@ export default {
       question: {
         "id": 381161861,
         title: '为什么美国疫情这么严重?',
-        // content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>',
-        content: '### 第一点',
+        content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>',
+        // content: '### 第一点',
         "answeredNum": 123,
         "viewedNum": 1230,
         "author": {
@@ -269,12 +278,23 @@ export default {
         questionId: undefined,
         // 回答列表排序方式
         sort: 1,
-        startIndex: 0,
-        num: 5
+        pageNum: 1,
+        pageSize: 5
       }
     }
   },
+  computed: {
+    // 属性映射，对应getters.js中的属性
+    ...mapGetters([
+      'avatar',
+      'name',
+      'job'
+    ])
+  },
   created () {
+    if (this.$route.query.write) {
+      this.answerAdd = true
+    }
     this.getQuestionById()
   },
   mounted () {
@@ -284,10 +304,11 @@ export default {
     // 获取问题详情
     getQuestionById () {
       getQuestion(this.$route.query.questionId).then(response => {
-        // console.log(response.data)
+        console.log('问题详情', response.data)
         this.question = response.data
         // this.question.content = this.escapeStringHTML(this.question.content)
         this.question.content = this.mdToHtml(this.question.content)
+        // console.log('html文本' , this.question.content)
         this.queryParam.questionId = this.question.id
         this.answerForm.questionId = this.question.id
         // 确保先取到问题再获取对应的回答
@@ -295,49 +316,82 @@ export default {
       })
     },
     getAnswersByParam () {
+      console.log('回答的查询参数', this.queryParam.pageNum)
       listAnswer(this.queryParam).then(response => {
-        // console.log(response.data)
-        this.answerList = response.data
-        this.answerList.forEach(item => {
+        console.log('获取的回答列表', response.data)
+        var tempList = response.data
+        tempList.forEach(item => {
           item.content = this.mdToHtml(item.content)
         })
+        this.answerList = this.answerList.concat(tempList)
+        this.busy = false
       })
     },
     // 提交回答
     handleSubmitAnswer () {
       console.log(this.answerForm)
       if (this.answerForm.content !== '') {
-        // addAnswer(this.answerForm).then(response => {
-        //   this.answerAdd = false
-        //   this.getQuestionById()
-        // })
+        addAnswer(this.answerForm).then(response => {
+          this.answerAdd = false
+          this.getQuestionById()
+        })
       }
     },
     // 监听滚动
     handleScroll () {
       // 获取需要判断顶部和底部到浏览器底部距离的元素
-      var item = this.$refs.answerItem[this.currentIndex]
+      if (this.currentIndex !== -1) {
+        var item = this.$refs.answerItem[this.currentIndex]
+
+        // 元素的底部或顶部已经到达浏览器底部
+        if (this.isBottomReachToBottomOfBrowser(item) || this.isTopReachToBottomOfBrowser(item)) {
+          this.isContentActionsFixed = false
+        } else {
+          // 介于两者之间，需要固定操作栏
+          this.isContentActionsFixed = true
+        }
+      }
+    
+    },
+    isBottomReachToBottomOfBrowser (item) {
       // 元素本身的高度和它到父元素顶部的高度
       var H = item.offsetHeight + item.offsetTop
       // 滚动距离界限1,超过这个距离，所选元素的底部就会位于浏览器底部以上
       var scrollHeightToBottom = H - document.documentElement.clientHeight + 54
-      // 滚动距离界限2,小于这个距离，所选元素的顶部就会位于浏览器底部以下
-      var scrollHeightToTop = item.offsetTop - document.documentElement.clientHeight + 100
       // 由于滚动而被隐藏的高度
       var hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
 
-      // 元素的底部或顶部已经到达浏览器底部
-      if ((hiddenHeight >= scrollHeightToBottom) || (hiddenHeight < scrollHeightToTop)) {
-        this.isContentActionsFixed = false
+      if (hiddenHeight >= scrollHeightToBottom) {
+        return true
       } else {
-        // 介于两者之间，需要固定操作栏
-        this.isContentActionsFixed = true
+        return false
+      }
+    },
+    isTopReachToBottomOfBrowser (item) {
+      // 元素本身的高度和它到父元素顶部的高度
+      var H = item.offsetHeight + item.offsetTop
+      // 滚动距离界限2,小于这个距离，所选元素的顶部就会位于浏览器底部以下
+      var scrollHeightToTop = item.offsetTop - document.documentElement.clientHeight + 150
+      // 由于滚动而被隐藏的高度
+      var hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+
+      if (hiddenHeight < scrollHeightToTop) {
+        return true
+      } else {
+        return false
       }
     },
     handleExpandContent (index) {
       this.currentIndex = index
       // 延迟执行边界判断，防止handleScroll方法读取到渲染之前的元素高度
       setTimeout(this.handleScroll, 100)
+    },
+    // 无限滚动
+    loadMore () {
+      this.busy = true
+      //把busy置位true，这次请求结束前不再执行
+      this.queryParam.pageNum++
+      this.getAnswersByParam()
     }
   }
 }
@@ -630,7 +684,7 @@ export default {
 }
 
 .ContentItem-actions.is-fixed {
-    margin: 0;
+    // margin: 0;
     -webkit-box-shadow: 0 -1px 3px rgba(26,26,26,.1);
     box-shadow: 0 -1px 3px rgba(26,26,26,.1);
 }
@@ -649,7 +703,8 @@ export default {
 .specialContentItem-actions {
   width: 998px;
   bottom: 0px;
-  left: 259.6px;
+  // left: 259.6px;
+  margin: 0 -20px;
 }
 
 // 写回答对话框

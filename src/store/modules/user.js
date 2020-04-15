@@ -5,7 +5,9 @@ const user = {
   state: {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    department: '',
+    job: ''
   },
 
   mutations: {
@@ -17,16 +19,22 @@ const user = {
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
+    },
+    SET_DEPARTMENT: (state, department) => {
+      state.department = department
+    },
+    SET_JOB: (state, job) => {
+      state.job = job
     }
   },
 
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      const workNum = userInfo.workNum.trim()
       const password = userInfo.password
       return new Promise((resolve, reject) => {
-        login(username, password).then(res => {
+        login(workNum, password).then(res => {
           setToken(res.data)
           commit('SET_TOKEN', res.data)
           resolve()
@@ -40,11 +48,13 @@ const user = {
     GetInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(res => {
-          const user = res.user
-          const avatar = user.avatar === '' ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + user.avatar
+          const user = res.data
+          const avatar = user.avatar === '' ? require('@/assets/image/profile.jpg') : user.avatar
 
-          commit('SET_NAME', user.username)
+          commit('SET_NAME', user.name)
           commit('SET_AVATAR', avatar)
+          commit('SET_DEPARTMENT', user.department)
+          commit('SET_JOB', user.job)
           resolve(res)
         }).catch(error => {
           reject(error)
