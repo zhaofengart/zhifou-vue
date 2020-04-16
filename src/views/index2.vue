@@ -14,9 +14,8 @@
                 <!-- 头部 -->
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
-                    <!-- <a class="TopstoryTabs-link" href="/" >推荐</a> -->
-                    <el-button type="text" class="TopstoryTabs-link" @click="handleListQuestion(1)" :class="{'is-clicked': !isClicked}">推荐</el-button>
-                    <el-button type="text" class="TopstoryTabs-link" @click="handleListQuestion(2)" :class="{'is-clicked': isClicked}">新问题</el-button>
+                    <a class="TopstoryTabs-link" @click="handleListQuestion(1)" :class="{'is-clicked': !isClicked}">推荐</a>
+                    <a class="TopstoryTabs-link" @click="handleListQuestion(2)" :class="{'is-clicked': isClicked}">新问题</a>               
                   </div>
                 </div>
                 <!-- 推荐和新问题列表 -->
@@ -32,8 +31,9 @@
                           <div class="ContentItem-actions">
                             <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit"  @click="handleWriteAnswer(item.id)">写回答</el-button>
                             <el-button type="text" class="Button--plain ContentItem-action Button--grey " icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
-                            <span style="margin-left: 180px;">{{parseTime(item.createTime)}}</span>
-                            <span style="margin-left: 50px;">{{item.answeredNum}}回答</span>
+                            <span style="margin-left: 170px;">{{parseTime(item.createTime)}}</span>
+                            <span style="margin-left: 30px; width: 60px; text-align: right;">{{item.answeredNum}}</span>
+                            <span style="margin-left: 5px;">回答</span>
                           </div>
                         </div>
                       </div>
@@ -85,7 +85,7 @@ export default {
   },
   data () {
     return {
-      isClicked: false,
+      isClicked: true,
       contentStatus: true,
       pageInfo: {
         total: 0,
@@ -121,7 +121,8 @@ export default {
     },
     handleWriteAnswer(questionId) {
       localStorage.setItem('write', true)
-      this.$router.push({path: '/question', query: {questionId: questionId}})
+      let routerJump = this.$router.resolve({path: '/question', query: {questionId: questionId}})
+      window.open(routerJump.href, '_blank')
     },
     handleChangePageNum (currentPage) {
       this.queryParam.pageNum = currentPage
@@ -130,7 +131,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" scoped>
 // .container {
 //   font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
 //   font-size: 15px;
@@ -205,7 +206,7 @@ export default {
   font-size: 16px;
   margin: 0 22px;
 }
-.TopstoryTabs-link.is-active {
+.TopstoryTabs-link.is-clicked {
   color: #0084ff;
   font-weight: 500;
 }

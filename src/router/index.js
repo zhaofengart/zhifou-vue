@@ -85,6 +85,12 @@ export default new Router({
       component: () => import('@/views/searchresult'),
       hidden: true,
       meta: { title: '知否问答' }
+    },
+    {
+      path: '/search',
+      component: () => import('@/views/searchResult2'),
+      hidden: true,
+      meta: { title: '知否问答' }
     }
   ]
 })

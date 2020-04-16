@@ -151,19 +151,12 @@ export default {
     console.log('created')
     if (this.$route.query.value) {
       this.searchValue = this.$route.query.value
-      this.handleSearch2()
+      this.doSearch()
     }
   },
   methods: {
-    handleSearch2 () {
-      this.$router.push({
-        path: '/search',
-        query: {
-          value: this.searchValue
-        }
-      })
-    },
     handleSearch () {
+      // 验证搜索内容是否合规
       if (!this.validateLengthOfSearchValue()) {
         return
       }
@@ -181,14 +174,17 @@ export default {
           location.reload()
         } else {
           console.log('跳转搜索页', this.searchValue)
-          this.$router.push({
-            path: '/search',
-            query: {
-              value: this.searchValue
-            }
-          })
+          this.doSearch()
         }
       }
+    },
+    doSearch () {
+      this.$router.push({
+        path: '/search',
+        query: {
+          value: this.searchValue
+        }
+      })
     },
     validateLengthOfSearchValue () {
       console.log('处理搜索内容变化', this.searchValue.length)
@@ -326,7 +322,7 @@ a, a em {
     overflow: hidden;
 }
 .SearchBar-input {
-    width: 432px;
+    width: 408px;
     height: 34px;
     padding-left: 12px;
     padding-right: 0;

@@ -25,6 +25,14 @@ export function getQuestion (questionId) {
   })
 }
 
+export function searchQuestion (query) {
+  return request({
+    url: '/question/title/search',
+    method: 'get',
+    params: query
+  })
+}
+
 export function listQuestion (query) {
   return request({
     url: '/question/list',

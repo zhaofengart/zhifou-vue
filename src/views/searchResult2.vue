@@ -4,7 +4,7 @@
     <IndexHeader></IndexHeader>
 
     <!-- 主要内容 -->
-    <div class="main">
+    <div class="my-main">
       <div>
         <div class="TopStory-container">
           <div class="Topstory-mainColumn">
@@ -13,37 +13,28 @@
                 <!-- 头部 -->
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
-                    <a class="TopstoryTabs-link" href="/" >问题</a>
-                    <a class="TopstoryTabs-link" href="/" >文章</a>
+                    <a class="TopstoryTabs-link" :class="{'is-active': isQuestionActive}" @click="handleListQuestion">问题</a>
+                    <a class="TopstoryTabs-link" :class="{'is-active': isArticleActive}">文章</a>
                   </div>
                 </div>
                 <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,3)" :key="i">
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item) in pageInfo.list" :key="item.id">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
-                          <router-link :to="{path: '/question', query: {questionId: 382058831}}">
-                            如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？
+                          <!-- 文章标题 -->
+                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
+                            <span v-html="item.title"></span>
                           </router-link>
-                          <!-- <a target="_blank" href="/question/382058831/answer/1103404813">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</a> -->
                         </h2>
-                        <div class="RichContent" :class="{'is-collapsed': contentStatus}">
-                          <div class="RichContent-cover">
-                            <div class="RichContent-cover-inner">
-                              <img src="https://pic1.zhimg.com/v2-9e4d48633106c39e368c2ec9a4fcbd7c_400x224.jpg" alt="cover" style="width: 190px; height: 105px;">
-                            </div>
-                          </div>
-                          <div class="RichContent-inner">
-                              <span class="RichText ztext CopyrightRichText-richText" itemprop="text">绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…</span>
-                              <el-button v-if="contentStatus" class="ContentItem-more Button--plain" @click="contentToggle" style="font-size: 14px;">阅读全文<i class="el-icon-arrow-down el-icon--right"></i></el-button>
-                          </div>
+                        <div class="RichContent">
                           <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit">写回答</el-button>
-                            <el-button class="Button--plain ContentItem-action Button--grey " icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
-                            <el-button class="Button--plain ContentItem-action Button--grey" icon="el-icon-time" style="margin-left: 24px;">稍后答</el-button>
-                            <span style="margin-left: 100px;">2020年3月20日 16:00</span>
-                            <span style="margin-left: 50px;">666回答</span>
+                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit" @click="handleWriteAnswer(item.id)">写回答</el-button>
+                            <el-button type="text" class="Button--plain ContentItem-action Button--grey " icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
+                            <span style="margin-left: 170px;">{{parseTime(item.createTime)}}</span>
+                            <span style="margin-left: 30px; width: 60px; text-align: right;">{{item.answeredNum}}</span>
+                            <span style="margin-left: 5px;">回答</span>
                           </div>
                         </div>
                       </div>
@@ -55,7 +46,10 @@
                   <el-pagination
                     background
                     layout="prev, pager, next"
-                    :total="60">
+                    :current-page="queryParam.pageNum"
+                    :page-size="queryParam.pageSize"
+                    :total="pageInfo.total"
+                    @current-change="handleChangePageNum">
                   </el-pagination>
                 </div>
               </el-card>
@@ -81,6 +75,7 @@
 <script>
 import QuickEntry from '@/components/QuickEntry'
 import Leaderboard from '@/components/Leaderboard'
+import { searchQuestion } from '@/api/question'
 
 export default {
   components: {
@@ -89,16 +84,55 @@ export default {
   },
   data () {
     return {
-      contentStatus: true,
-      storyList: []
+      isQuestionActive: true,
+      isArticleActive: false,
+      queryParam: {
+        searchTitle: '',
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      },
+      pageInfo: {
+        total: 60,
+        totalPage: 10,
+        list: [
+          // {
+          //   id: 382058831,
+          //   title: '如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？',
+          //   content: '绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…',
+          //   createTime: new Date(),
+          //   answeredNum: 100
+          // }
+        ]
+      },
     }
   },
   computed: {
     
   },
+  created () {
+    this.queryParam.searchTitle = this.$route.query.value
+    this.handleSearch()
+  },
   methods: {
-    contentToggle () {
-
+    handleListQuestion () {
+      console.log('点击了问题标签')
+    },
+    handleSearch () {
+      console.log('查询参数', this.queryParam)
+      searchQuestion(this.queryParam).then(resp => {
+        console.log('获取的问题列表', resp.data)
+        this.pageInfo = resp.data
+      })
+    },
+    handleWriteAnswer (questionId) {
+      localStorage.setItem('write', true)
+      let routerJump = this.$router.resolve({path: '/question', query: {questionId: questionId}})
+      window.open(routerJump.href, '_blank')
+    },
+    handleChangePageNum (currentPage) {
+      this.queryParam.pageNum = currentPage
+      this.handleSearch()
     }
   }
 }
@@ -106,7 +140,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 
 // 问题、文章列表
-.main {
+.my-main {
   display: block;
   margin-top: 62px;
   margin-bottom: 50px;
@@ -240,7 +274,7 @@ export default {
     overflow: hidden;
 }
 .RichContent.is-collapsed .RichContent-inner {
-    
+    max-height: 100px;
 }
 .ContentItem-actions {
     display: -webkit-box;
