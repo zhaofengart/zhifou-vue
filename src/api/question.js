@@ -24,3 +24,11 @@ export function getQuestion (questionId) {
     method: 'get'
   })
 }
+
+export function listQuestion (query) {
+  return request({
+    url: '/question/list',
+    method: 'get',
+    params: query
+  })
+}

@@ -14,26 +14,26 @@
                 <!-- 头部 -->
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
-                    <a class="TopstoryTabs-link" href="/" >推荐</a>
-                    <a class="TopstoryTabs-link" href="/" >新问题</a>
+                    <!-- <a class="TopstoryTabs-link" href="/" >推荐</a> -->
+                    <el-button type="text" class="TopstoryTabs-link" @click="handleListQuestion(1)" :class="{'is-clicked': !isClicked}">推荐</el-button>
+                    <el-button type="text" class="TopstoryTabs-link" @click="handleListQuestion(2)" :class="{'is-clicked': isClicked}">新问题</el-button>
                   </div>
                 </div>
                 <!-- 推荐和新问题列表 -->
-                <!-- <router-view></router-view> -->
-                <!-- 文章列表 -->
                 <div class="Topstory-recommend">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="i in (1,5)" :key="i">
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item) in pageInfo.list" :key="item.id">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
-                          <router-link :to="{path: '/question', query: {questionId: 381161861}}" target="_blank">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</router-link>
+                          <!-- <router-link :to="{path: '/question', query: {questionId: 381161861}}" target="_blank">如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？</router-link> -->
+                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">{{item.title}}</router-link>
                         </h2>
                         <div class="RichContent">
                           <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit">写回答</el-button>
+                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-edit"  @click="handleWriteAnswer(item.id)">写回答</el-button>
                             <el-button type="text" class="Button--plain ContentItem-action Button--grey " icon="el-icon-plus" style="margin-left: 24px;">关注问题</el-button>
-                            <span style="margin-left: 180px;">2020年3月20日 16:00</span>
-                            <span style="margin-left: 50px;">666回答</span>
+                            <span style="margin-left: 180px;">{{parseTime(item.createTime)}}</span>
+                            <span style="margin-left: 50px;">{{item.answeredNum}}回答</span>
                           </div>
                         </div>
                       </div>
@@ -45,7 +45,10 @@
                   <el-pagination
                     background
                     layout="prev, pager, next"
-                    :total="60">
+                    :current-page="queryParam.pageNum"
+                    :page-size="queryParam.pageSize"
+                    :total="pageInfo.total"
+                    @current-change="handleChangePageNum">
                   </el-pagination>
                 </div>
               </el-card>
@@ -72,6 +75,7 @@
 import IndexHeader from '@/components/IndexHeader'
 import QuickEntry from '@/components/QuickEntry'
 import Leaderboard from '@/components/Leaderboard'
+import { listQuestion } from '@/api/question'
 
 export default {
   components: {
@@ -81,16 +85,47 @@ export default {
   },
   data () {
     return {
+      isClicked: false,
       contentStatus: true,
-      storyList: []
+      pageInfo: {
+        total: 0,
+        totalPage: 0,
+        list: []
+      },
+      queryParam: {
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      }
     }
   },
   computed: {
     
   },
+  created () {
+    // 默认获取推荐的问题，也就是按热度排序的问题
+    this.handleListQuestion(1)
+  },
   methods: {
-    contentToggle () {
-
+    handleListQuestion (sort) {
+      if (sort !== undefined) {
+        this.queryParam.sort = sort
+        this.queryParam.pageNum = 1
+        this.isClicked = !this.isClicked
+      }
+      console.log('问题列表查询参数', this.queryParam)
+      listQuestion(this.queryParam).then(resp => {
+        console.log('获取的问题列表', resp.data)
+        this.pageInfo = resp.data
+      })
+    },
+    handleWriteAnswer(questionId) {
+      localStorage.setItem('write', true)
+      this.$router.push({path: '/question', query: {questionId: questionId}})
+    },
+    handleChangePageNum (currentPage) {
+      this.queryParam.pageNum = currentPage
+      this.handleListQuestion()
     }
   }
 }
@@ -283,5 +318,9 @@ export default {
 .Pagination {
   margin: 15px auto;
   text-align: center;
+}
+
+.el-button--text.is-clicked {
+  color: #8590a6
 }
 </style>

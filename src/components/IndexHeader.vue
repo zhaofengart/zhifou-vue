@@ -358,13 +358,7 @@ a, a em {
     background: #f6f6f6;
 }
 
-.SearchBar-askButton {
-  width: 60px;
-  height: 34px;
-  padding: 0 14px;
-  margin-left: 16px;
-  text-align: center;
-}
+
 
 // 用户信息
 .AppHeader-userInfo {

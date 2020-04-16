@@ -50,6 +50,7 @@
           v-model="registerForm.password"
           type="password"
           auto-complete="off"
+          show-word-limit clearable show-password
         >
         </el-input>
       </el-form-item>
@@ -132,7 +133,9 @@ export default {
           }
         ],
         password: [
-          { required: true, trigger: 'blur', message: '密码不能为空' }
+          { required: true, trigger: 'blur', message: '密码不能为空' },
+          { min: 6, message: '请输入6位密码', trigger: 'blur'},
+          { max: 6, message: '请输入6位密码', trigger: 'blur'}
         ],
         confirmPassword: [
           { required: true, trigger: 'blur', message: '确认密码不能为空' },
