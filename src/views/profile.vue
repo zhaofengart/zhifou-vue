@@ -3,7 +3,7 @@
     <IndexHeader></IndexHeader>
     <!-- 个人资料 -->
     <div class="ProfileHeader">
-      <el-card class="card">
+      <el-card class="Profile-card">
         <div class="\">
           <div class="UserCoverEditor">
             <img style="width: 100%; height: 120px;" src="https://static.zhihu.com/heifetz/assets/guide-cover-1.4423ce0f.jpg">
@@ -137,7 +137,7 @@ export default {
   padding: 0 16px;
   margin: 62px auto 10px auto;
 }
-.card {
+.Profile-card {
   display: block;
   width: 100%;
   height: 248px;

@@ -7,17 +7,18 @@
         </a>
         <ul class="AppHeader-Tabs">
           <li class="Tabs-item AppHeader-Tab">
-            <a class="Tabs-link AppHeader-TabsLink" href="/index2">首页</a>
+            <a ref="indexLink" class="Tabs-link AppHeader-TabsLink" href="/">首页</a>
           </li>
           <li class="Tabs-item AppHeader-Tab">
-            <a class="Tabs-link AppHeader-TabsLink" href="">文章</a>
+            <a ref="articleLink" class="Tabs-link AppHeader-TabsLink" >文章</a>
           </li>
         </ul>
 
         <!-- 搜索部分 -->
         <div class="SearchBar">
           <label class="SearchBar-input">
-            <el-input v-model="searchValue" size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容" @keyup.enter.native="handleSearch">
+            <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
+              @keyup.enter.native="handleSearch">
             <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
             </el-input>
           </label>
@@ -79,11 +80,14 @@
   </div>
 </template>
 <script>
+import { Notification, MessageBox, Message } from 'element-ui'
 import { mapGetters } from 'vuex'
 
 export default {
   data () {
     return {
+      indexActive: true,
+      artileActive: false,
       searchValue: '',
       tableData: [{
         date: '2016-05-02',
@@ -128,17 +132,82 @@ export default {
   },
   watch: {
     $route (to, from){
+      console.log('router change', 'value', this.$route.query.value, 'searchValue',this.searchValue)
+      if (this.$route.path === '/search' && this.$route.query.value === this.searchValue) {
+        location.reload()
+      } 
+    }
+  },
+  mounted () {
+    if (this.$route.path === '/') {
+      this.$refs.indexLink.className += ' is-active'
+    } 
+    // else if (this.$route.path === '/questionpublish'){
+    //   this.$refs.articleLink.className +=  ' is-active'
+    // }
+    console.log('mounted')
+  },
+  created () {
+    console.log('created')
+    if (this.$route.query.value) {
+      this.searchValue = this.$route.query.value
+      this.handleSearch2()
     }
   },
   methods: {
+    handleSearch2 () {
+      this.$router.push({
+        path: '/search',
+        query: {
+          value: this.searchValue
+        }
+      })
+    },
     handleSearch () {
+      if (!this.validateLengthOfSearchValue()) {
+        return
+      }
+
       if (this.searchValue !== '') {
         // 保存为历史记录
         this.$store.dispatch("addHistory", this.searchValue)   
         // 打印历史记录  
-        console.log(this.historyList)
+        console.log('历史记录', this.historyList)
 
+        console.log('当前路由path', this.$route.path, '', 'value', this.$route.query.value, 'searchValue',this.searchValue)
+        
+        // 跳转搜索结果页面
+        if (this.$route.path === '/search' && this.$route.query.value === this.searchValue) {
+          location.reload()
+        } else {
+          console.log('跳转搜索页', this.searchValue)
+          this.$router.push({
+            path: '/search',
+            query: {
+              value: this.searchValue
+            }
+          })
+        }
       }
+    },
+    validateLengthOfSearchValue () {
+      console.log('处理搜索内容变化', this.searchValue.length)
+      var length = this.searchValue.length
+      if (length >0 && length <= 50) {
+        return true
+      }
+
+      var messageContent = '请输入搜索内容'
+      if (length >= 50) {
+        messageContent = '输入内容不超过50个字'
+      } 
+      this.$message({
+        showClose: true,
+        message: messageContent,
+        type: 'warning'
+      });
+
+      return false
     },
     handlePublishQuestion () {
       this.$router.push({path: 'questionpublish'})
@@ -210,17 +279,6 @@ li {
   list-style-type: none;
   text-align: -webkit-match-parent;
 }
-.AppHeader-TabsLink.is-active {
-    color: #444;
-}
-.Tabs-link.is-active {
-    font-weight: 600;
-    font-synthesis: style;
-}
-.AppHeader-TabsLink {
-    color: #8590a6;
-    font-size: 15px;
-}
 .Tabs-link {
     position: relative;
     display: inline-block;
@@ -229,6 +287,26 @@ li {
     line-height: 22px;
     color: #1a1a1a;
     text-align: center;
+}
+.Tabs-link.is-active {
+    font-weight: 600;
+    font-synthesis: style;
+}
+.Tabs-link.is-active:after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    background: #0084ff;
+    content: "";
+}
+.AppHeader-TabsLink {
+    color: #8590a6;
+    font-size: 15px;
+}
+.AppHeader-TabsLink.is-active {
+    color: #444;
 }
 a, a em {
     text-decoration: none;

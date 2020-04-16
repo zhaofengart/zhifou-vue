@@ -2,7 +2,7 @@
   <div>
     <el-backtop style="z-index: 10000;" :bottom="100"></el-backtop>
     <IndexHeader></IndexHeader>
-    <div class="main">
+    <div class="QuestionDetail-main">
       <div class="QuestionPage">
         <div class="QuestionHeader">
           <!-- 文章简要信息 -->
@@ -92,15 +92,12 @@
                       <!-- 写回答头部 -->
                       <div class="AnswerAdd-header">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <!-- <el-avatar shape="circle" size="large" src="https://pic4.zhimg.com/da8e974dc_is.jpg"></el-avatar> -->
                           <el-avatar shape="circle" size="large" :src="avatar"></el-avatar>
                           <div class="AuthorInfo-content">
                             <div class="AuthorInfo-head">
-                              <!-- <span class="AuthorInfo-name">小小猪排酱中游</span> -->
                               <span class="AuthorInfo-name">{{name}}</span>
                             </div>
                             <div class="AuthorInfo-job">
-                              <!-- <span>Java开发</span> -->
                               <span>{{job}}</span>
                             </div>
                           </div>
@@ -126,7 +123,7 @@
                 <el-card>
                   <!-- 回答头部 -->
                   <div slot="header" class="List-header">
-                    <el-radio-group v-model="queryParam.sort" @change="getAnswersByParam">
+                    <el-radio-group v-model="queryParam.sort" @change="handleAnswerSortChange">
                       <el-radio :label="1">按热度排序</el-radio>
                       <el-radio :label="2">按时间排序</el-radio>
                     </el-radio-group>
@@ -205,7 +202,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- <span ref="listBottom"></span> -->
                   <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="400" infinite-scroll-immediate-check="false">
                       <!-- <div class="loading">加载中...</div> -->
                   </div>
@@ -242,6 +238,9 @@ export default {
       isContentActionsFixed: true,
       // 编辑框是否全屏
       isFullScreen: false,
+      pageInfo: {
+        totalPage: 10
+      },
       answerList: [
         {
           "id": 123,
@@ -260,7 +259,6 @@ export default {
         "id": 381161861,
         title: '为什么美国疫情这么严重?',
         content: '<p>最近美国疫情确诊人数为什么直线上升，话说之前特朗普也是最早对中国进行断航的国家，但为什么后期感觉防控不力而且一直在推诿。</p><p>还有个疑问就是有人质疑说中国很多感染者没有计入官方统计的数字中，还有人说美国把无症状的也统计进去了。</p>',
-        // content: '### 第一点',
         "answeredNum": 123,
         "viewedNum": 1230,
         "author": {
@@ -279,7 +277,7 @@ export default {
         // 回答列表排序方式
         sort: 1,
         pageNum: 1,
-        pageSize: 5
+        pageSize: 10
       }
     }
   },
@@ -292,10 +290,11 @@ export default {
     ])
   },
   created () {
-    if (this.$route.query.write) {
-      this.answerAdd = true
-    }
     this.getQuestionById()
+    if (localStorage.getItem('write')) {
+      this.answerAdd = true
+      localStorage.removeItem('write')
+    }
   },
   mounted () {
     window.addEventListener('scroll', this.handleScroll)
@@ -303,6 +302,7 @@ export default {
   methods: {
     // 获取问题详情
     getQuestionById () {
+      this.answerList = []
       getQuestion(this.$route.query.questionId).then(response => {
         console.log('问题详情', response.data)
         this.question = response.data
@@ -311,6 +311,7 @@ export default {
         // console.log('html文本' , this.question.content)
         this.queryParam.questionId = this.question.id
         this.answerForm.questionId = this.question.id
+
         // 确保先取到问题再获取对应的回答
         this.getAnswersByParam()
       })
@@ -319,7 +320,8 @@ export default {
       console.log('回答的查询参数', this.queryParam.pageNum)
       listAnswer(this.queryParam).then(response => {
         console.log('获取的回答列表', response.data)
-        var tempList = response.data
+        var tempList = response.data.list
+        this.pageInfo.totalPage = response.data.totalPage
         tempList.forEach(item => {
           item.content = this.mdToHtml(item.content)
         })
@@ -336,6 +338,10 @@ export default {
           this.getQuestionById()
         })
       }
+    },
+    handleAnswerSortChange () {
+      this.answerList = []
+      this.getAnswersByParam()
     },
     // 监听滚动
     handleScroll () {
@@ -388,6 +394,9 @@ export default {
     },
     // 无限滚动
     loadMore () {
+      if (this.queryParam.pageNum >= this.pageInfo.totalPage || this.queryParam.questionId === undefined) {
+        return
+      }
       this.busy = true
       //把busy置位true，这次请求结束前不再执行
       this.queryParam.pageNum++
@@ -396,8 +405,8 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.main {
+<style rel="stylesheet/scss" lang="scss" scoped>
+.QuestionDetail-main {
   display: flex;
   justify-content: center;
   margin-top: 52px;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card>
-      <div class="card">
+      <div class="QuickEntry-card">
         <div class="GlobalWrite">
           <router-link to="/questionpublish" title="提问" class="GlobalWrite-navItem">
             <svg-icon icon-class="question" class="GlobalWrite-navIcon"></svg-icon> 
@@ -25,8 +25,8 @@ export default {
   
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.card {
+<style rel="stylesheet/scss" lang="scss" scoped>
+.QuickEntry-card {
   // margin: -20px;
   width: 294px;
 }

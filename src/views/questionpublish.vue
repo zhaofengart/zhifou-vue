@@ -1,7 +1,7 @@
 <template>
   <div>
     <IndexHeader></IndexHeader>
-    <div class="main">
+    <div class="QuestionPublish-main">
       <el-card class="QuestionPublishCard">
         <el-form ref="form" :model="form" :rules="rules">
           <el-form-item prop="title">
@@ -121,6 +121,8 @@ export default {
         if (resp.data.length !== 0) {
           this.recommendQuestionList = resp.data
           this.showRecommendQuestion = true
+        } else {
+          this.showRecommendQuestion = false
         }
       })
     },
@@ -131,7 +133,7 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.main {
+.QuestionPublish-main {
   display: flex;
   justify-content: center;
   margin-top: 62px;

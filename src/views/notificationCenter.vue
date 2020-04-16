@@ -4,7 +4,7 @@
     <IndexHeader></IndexHeader>
 
     <!-- 主要内容 -->
-    <div class="main">
+    <div class="Notification-main">
         <div class="TopStory-container">
           <div class="Topstory-mainColumn">
             <div class="Topstory-mainColumnCard">
@@ -63,7 +63,7 @@
 <style rel="stylesheet/scss" lang="scss">
 
   // 第一部分
-  .main {
+  .Notification-main {
     display: block;
     margin-top: 62px;
     margin-left: 300px;
