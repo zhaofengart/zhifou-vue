@@ -16,12 +16,37 @@
 
         <!-- 搜索部分 -->
         <div class="SearchBar">
-          <label class="SearchBar-input">
-            <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
-              @keyup.enter.native="handleSearch">
-            <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
-            </el-input>
-          </label>
+          <div class="SearchAndHistory">
+            <label class="SearchBar-input">
+              <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
+                @focus="handleInputFocus"
+                @keyup.enter.native="handleSearch">
+              <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
+              </el-input>
+            </label>
+            <!-- 搜索历史 -->
+            <el-card v-if="isShowSearchHistory" class="HistoryList">
+              <template slot="header">
+                <div class="HistoryList-header">
+                  <span style="font-size: 14px; color: #8590a6;">搜索历史</span>
+                  <el-button type="text" @click="handleClearSearchHistory" icon="el-icon-delete">清除</el-button>
+                  <el-button type="text" @click="isShowSearchHistory = false">关闭</el-button>
+                </div>
+              </template>
+              <div class="HistoryItem-container">
+                <div v-for="(item, index) in historyList" :key="item">
+                  <!-- 默认展示10条记录 -->
+                  <div v-show="index < 10 || isShowMoreHistory" class="HistoryItem" >
+                    <el-button type="text" @click="handleSearchInHistory(item)">{{item}}</el-button>
+                    <el-button type="text" icon="el-icon-close" @click="handleRemoveHistory(item)"></el-button>
+                  </div>
+                </div>
+              </div>
+              <div v-show="!isShowMoreHistory && historyList.length > 10" class="MoreHistory">
+                <el-button type="text" icon="el-icon-d-arrow-right" @click="isShowMoreHistory = true">更多</el-button>
+              </div>
+            </el-card>
+          </div>
           <el-button type="primary" class="SearchBar-askButton" @click="handlePublishQuestion">提问</el-button>
         </div>
 
@@ -86,6 +111,8 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
+      isShowSearchHistory: false,
+      isShowMoreHistory: false,
       indexActive: true,
       artileActive: false,
       searchValue: '',
@@ -179,6 +206,7 @@ export default {
       }
     },
     doSearch () {
+      this.isShowSearchHistory = false
       this.$router.push({
         path: '/search',
         query: {
@@ -186,10 +214,14 @@ export default {
         }
       })
     },
+    handleSearchInHistory(val) {
+      this.searchValue = val
+      this.handleSearch()
+    },
     validateLengthOfSearchValue () {
       console.log('处理搜索内容变化', this.searchValue.length)
       var length = this.searchValue.length
-      if (length >0 && length <= 50) {
+      if (length > 0 && length <= 50) {
         return true
       }
 
@@ -218,6 +250,18 @@ export default {
           location.reload()
         })
       })
+    },
+    handleRemoveHistory (value) {
+      this.$store.dispatch('removeHistory', value)
+    },
+    handleClearSearchHistory () {
+      console.log('点击了清空历史按钮')
+      this.$store.dispatch('clearHistory')
+    },
+    handleInputFocus () {
+      if (this.historyList.length !== 0) {
+        this.isShowSearchHistory = true
+      }
     }
   }
 }
@@ -386,5 +430,39 @@ a, a em {
 .Avatar {
     background: #fff;
     border-radius: 2px;
+}
+.SearchAndHistory {
+  display: flex;
+  flex-direction: column;
+}
+.HistoryList {
+  width: 396px;
+  margin-left: 12px;
+  position: fixed;
+  z-index: 2000;
+  margin-top: 43px;
+}
+
+.HistoryList-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 15px;
+  margin-top: 5px;
+}
+.HistoryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 15px;
+}
+.HistoryItem .el-button {
+  padding: 5px auto;
+  color: #1a1a1a;
+}
+.MoreHistory {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15px;
 }
 </style>
