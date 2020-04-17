@@ -37,8 +37,8 @@
                 <div v-for="(item, index) in historyList" :key="item">
                   <!-- 默认展示10条记录 -->
                   <div v-show="index < 10 || isShowMoreHistory" class="HistoryItem" >
-                    <el-button type="text" @click="handleSearchInHistory(item)">{{item}}</el-button>
-                    <el-button type="text" icon="el-icon-close" @click="handleRemoveHistory(item)"></el-button>
+                    <span @click="handleSearchInHistory(item)" style="width: 100%; height: 100%;">{{item}}</span>
+                    <li @click="handleRemoveHistory(item)" class="el-icon-close" ></li>
                   </div>
                 </div>
               </div>
@@ -454,11 +454,12 @@ a, a em {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 15px;
+  cursor: pointer;
+  padding: 9px 15px;
 }
-.HistoryItem .el-button {
-  padding: 5px auto;
-  color: #1a1a1a;
+// 鼠标悬停改变背景颜色
+.HistoryItem:hover {
+  background-color: #f6f6f6;
 }
 .MoreHistory {
   display: flex;
