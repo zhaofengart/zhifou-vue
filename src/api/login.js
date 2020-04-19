@@ -56,13 +56,12 @@ export function register (form, code) {
 
 // 找回密码
 export function findPassword (form, code) {
-  const params = {
-    code
-  }
+  // const params = {
+  //   code
+  // }
   return request({
-    url: '/findPassword',
-    method: 'post',
-    params: params,
-    data: form
+    url: '/retrievePassword',
+    method: 'put',
+    params: form
   })
 }

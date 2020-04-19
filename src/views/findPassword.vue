@@ -2,12 +2,12 @@
   <div class="findPassword">
     <el-form ref="findPasswordForm" :model="findPasswordForm" :rules="findPasswordRules" class="findPassword-form" label-width="110px">
       <h3 class="title">找回密码</h3>
-      <el-form-item prop="workname" label="工号">
-        <el-input v-model="findPasswordForm.workname" type="text" auto-complete="off">
+      <el-form-item prop="workNum" label="工号">
+        <el-input v-model="findPasswordForm.workNum" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
-      <el-form-item prop="mail" label="邮箱">
-        <el-input v-model="findPasswordForm.mail" type="text" auto-complete="off">
+      <el-form-item prop="email" label="邮箱">
+        <el-input v-model="findPasswordForm.email" type="text" auto-complete="off">
         </el-input>
       </el-form-item>
       <el-row :gutter="20">
@@ -79,17 +79,17 @@
         codeText: '发送验证码',
         disabledCodeBtn: true,
         findPasswordForm: {
-          workname: '',
-          mail: '',
+          workNum: '',
+          email: '',
           code: '',
           password: '',
-          confimrPassword: ''
+          confirmPassword: ''
         },
         findPasswordRules: {
-          workname: [
+          workNum: [
             { required: true, trigger: 'blur', message: '工号不能为空' }
           ],
-          mail: [
+          email: [
             { required: true, message: '邮箱地址不能为空', trigger: 'blur' },
             {
               type: 'email',
@@ -98,7 +98,9 @@
             }
           ],
           password: [
-            { required: true, trigger: 'blur', message: '密码不能为空' }
+            { required: true, trigger: 'blur', message: '密码不能为空' },
+            { min: 6, message: '请输入6位密码', trigger: 'blur'},
+            { max: 6, message: '请输入6位密码', trigger: 'blur'}
           ],
           confirmPassword: [
             { required: true, trigger: 'blur', message: '确认密码不能为空' },
@@ -139,11 +141,11 @@
       },
       handleGetCode () {
         // 对邮箱进行单独验证
-        this.$refs.findPasswordForm.validateField('mail', (error => {
+        this.$refs.findPasswordForm.validateField('email', (error => {
           if (!error) {
             this.countDown(60)
-            console.log(this.findPasswordForm.mail)
-            getCode(this.findPasswordForm.mail)
+            console.log(this.findPasswordForm.email)
+            getCode(this.findPasswordForm.email)
           }
         }))
       },

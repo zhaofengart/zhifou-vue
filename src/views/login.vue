@@ -3,12 +3,13 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" label-width="80px">
       <h3 class="title">华锐技术社区</h3>
       <div class="setitem">
-        <el-form-item prop="username" label="工号">
-          <el-input v-model="loginForm.username"
+        <el-form-item prop="workNum" label="工号">
+          <el-input v-model="loginForm.workNum"
                     type="text"
                     auto-complete="off"
                     show-word-limit clearable
                     style="width: 90%"
+                    placeholder="S+4位工号"
           >
           </el-input>
         </el-form-item>
@@ -19,6 +20,8 @@
             auto-complete="off"
             show-word-limit clearable show-password
             style="width: 90%"
+            placeholder="请输入密码"
+            @keyup.enter.native="handlelogin"
           >
           </el-input>
         </el-form-item>
@@ -67,15 +70,22 @@
     data() {
       return {
         loginForm: {
-          username: '',
+          workNum: '',
           password: '',
         },
         loginRules: {
-          username: [
-            { required: true, trigger: 'blur', message: '工号不能为空' }
+          workNum: [
+            { required: true, trigger: 'blur', message: '工号不能为空' },
+            {
+              pattern: /^S[0-9]{4}$/,
+              message: "工号不符合规范",
+              trigger: "blur"
+            }
           ],
           password: [
-            { required: true, trigger: 'blur', message: '密码不能为空' }
+            { required: true, trigger: 'blur', message: '密码不能为空' },
+            { min: 6, message: '请输入6位密码', trigger: 'blur'},
+            { max: 6, message: '请输入6位密码', trigger: 'blur'}
           ],
         },
         loading: false,
@@ -85,14 +95,18 @@
       handlelogin (){
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-              this.loading = true;
-              login(loginForm.username,loginForm.password)
-              .then(response => {
-                this.$router.push({path: 'index2'})
-              })
-              .catch(() => {
-                this.loading = false;
-              })
+              // this.loading = true;
+              // login(this.loginForm.workNum,this.loginForm.password).then(response => {
+              //   this.$router.push({path: 'index2'})
+              // })
+              // .catch(() => {
+              //   this.loading = false;
+              // })
+              this.$store
+            .dispatch("Login", this.loginForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" });
+            })
             }
           })
       },
@@ -100,7 +114,7 @@
         this.$router.push({path: 'register'})
       },
       findPassWord (){
-        this.$router.push({path: 'findPassWord'})
+        this.$router.push({path: 'findPassword'})
       }
     }
   }
@@ -112,7 +126,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image: url("../assets/image/login-background.jpg");
+    background-image: url("../assets/image/login-background.png");
     background-color: #b8e5f8;
     background-size: cover;
   }
