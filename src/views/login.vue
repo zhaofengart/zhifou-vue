@@ -10,7 +10,7 @@
                     show-word-limit clearable
                     style="width: 90%"
                     placeholder="S+4位工号"
-          >
+          >s
           </el-input>
         </el-form-item>
         <el-form-item prop="password" label="密码">
@@ -80,7 +80,8 @@
               pattern: /^S[0-9]{4}$/,
               message: "工号不符合规范",
               trigger: "blur"
-            }
+            },
+            { required: true, trigger: 'blur', message: '工号不能为空' }
           ],
           password: [
             { required: true, trigger: 'blur', message: '密码不能为空' },
@@ -95,18 +96,11 @@
       handlelogin (){
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-              // this.loading = true;
-              // login(this.loginForm.workNum,this.loginForm.password).then(response => {
-              //   this.$router.push({path: 'index2'})
-              // })
-              // .catch(() => {
-              //   this.loading = false;
-              // })
               this.$store
-            .dispatch("Login", this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-            })
+              .dispatch("Login", this.loginForm)
+              .then(() => {
+                this.$router.push({ path: this.redirect || "/" });
+              })
             }
           })
       },
