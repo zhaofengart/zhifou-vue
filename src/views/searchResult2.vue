@@ -14,11 +14,11 @@
                 <div slot="header" class="TopstoryTabsHeader">
                   <div class="TopstoryTabs">
                     <a class="TopstoryTabs-link" :class="{'is-active': isQuestionActive}" @click="handleListQuestion">问题</a>
-                    <a class="TopstoryTabs-link" :class="{'is-active': isArticleActive}">文章</a>
+                    <a class="TopstoryTabs-link" :class="{'is-active': isArticleActive}" @click="handleChangeType">文章</a>
                   </div>
                 </div>
                 <!-- 文章列表 -->
-                <div class="Topstory-recommend">
+                <div class="Topstory-recommend" v-if="isQuestionActive==true">
                   <div class="">
                     <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item) in pageInfo.list" :key="item.id">
                       <div class="ContentItem AnswerItem">
@@ -41,6 +41,123 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="Topstory-recommend" v-if="isArticleActive == true">
+                  <div class="">
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
+                      <div class="ContentItem AnswerItem">
+                        <h2 class="ContentItem-title">
+                          <!-- 文章标题 -->
+                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
+                            <span v-html="item.title"></span>
+                          </router-link>
+                        </h2>
+                        <div class="ContentItem-meta">
+                        <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
+                          <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
+                          <div class="AuthorInfo-content">
+                            <div class="AuthorInfo-head">
+                              <span class="AuthorInfo-name">{{item.author.name}}</span>
+                            </div>
+                            <div class="AuthorInfo-job">
+                              <span>{{item.author.job}}</span>
+                            </div>
+                          </div>
+                          <div class="publishTime">
+                            <span>{{parseTime(item.createTime)}}</span>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="RichContent-inner">
+                          {{item | explainLen}}
+                          <a class="RichText ztext CopyrightRichText-richText"  v-show="item.content.length >= 75"
+                                style="color: #1890ff;"
+                                @click.stop="togglePickUp(item,$event)">{{item.isExpand?'　收起':'...全文'}}
+                          </a>
+                        </div>
+                        <div class="RichContent">
+                          <div class="ContentItem-actions">
+                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">​
+                              <svg-icon icon-class="comment"></svg-icon>
+                            </span>
+                              200条评论
+                            </button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">
+                              ​<svg-icon icon-class="collect"></svg-icon>
+                            </span>
+                              收藏
+                            </button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">
+                              ​<svg-icon icon-class="like"></svg-icon>
+                            </span>
+                              喜欢
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
+                      <div class="ContentItem AnswerItem">
+                        <h2 class="ContentItem-title">
+                          <!-- 文章标题 -->
+                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
+                            <span v-html="item.title"></span>
+                          </router-link>
+                        </h2>
+                        <div class="ContentItem-meta">
+                          <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
+                            <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
+                            <div class="AuthorInfo-content">
+                              <div class="AuthorInfo-head">
+                                <span class="AuthorInfo-name">{{item.author.name}}</span>
+                              </div>
+                              <div class="AuthorInfo-job">
+                                <span>{{item.author.job}}</span>
+                              </div>
+                            </div>
+                            <div class="publishTime">
+                              <span>{{parseTime(item.createTime)}}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="RichContent-inner">
+                          {{item | explainLen}}
+                          <a class="RichText ztext CopyrightRichText-richText"  v-show="item.content.length >= 75"
+                             style="color: #1890ff;"
+                             @click.stop="togglePickUp(item,$event)">{{item.isExpand?'　收起':'...全文'}}
+                          </a>
+                        </div>
+                        <div class="RichContent">
+                          <div class="ContentItem-actions">
+                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">​
+                              <svg-icon icon-class="comment"></svg-icon>
+                            </span>
+                              200条评论
+                            </button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">
+                              ​<svg-icon icon-class="collect"></svg-icon>
+                            </span>
+                              收藏
+                            </button>
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <span style="display: inline-flex; align-items: center;">
+                              ​<svg-icon icon-class="like"></svg-icon>
+                            </span>
+                              喜欢
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <!-- 分页 -->
                 <div class="Pagination">
                   <el-pagination
@@ -53,7 +170,7 @@
                   </el-pagination>
                 </div>
               </el-card>
-              
+
             </div>
           </div>
 
@@ -96,19 +213,92 @@ export default {
         total: 60,
         totalPage: 10,
         list: [
-          // {
-          //   id: 382058831,
-          //   title: '如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？',
-          //   content: '绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…',
-          //   createTime: new Date(),
-          //   answeredNum: 100
-          // }
+           {
+             id: 382058831,
+             title: '如何看待3 月 24 日巴西黑帮发布通告称，会代替政府执行强制封城，以抗击新冠疫情？',
+             content: '绑了磁的ge： 百看不厌的英文电影还是有不少的，接下来我就推荐一下<b>已经刷过三遍以上，高赞回答没有盘点</b>的一些英文电影。（肖申克、阿甘这种太过经典的就不谈了） （PS:感动得快哭了，收藏数和赞数几乎3:1了，…',
+             createTime: new Date(),
+             answeredNum: 100
+           }
+        ]
+      },
+
+      pageClassInfo: {
+        total: 60,
+        totalPage: 10,
+        list: [
+          {
+            id: 382058830,
+            "author": {
+              "id": 234,
+              "name": "小小猪排酱中游",
+              "job":  "Java开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+            },
+            title: 'C++智能指针详解',
+            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
+            createTime: new Date(),
+            isExpand: false,
+          },
+          {
+            id: 382058830,
+            "author": {
+              "id": 234,
+              "name": "小小猪排酱中游",
+              "job":  "Java开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+            },
+            title: 'C++智能指针详解',
+            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
+            createTime: new Date(),
+            isExpand: false,
+          }
         ]
       },
     }
   },
   computed: {
-    
+
   },
   created () {
     this.queryParam.searchTitle = this.$route.query.value
@@ -117,6 +307,12 @@ export default {
   methods: {
     handleListQuestion () {
       console.log('点击了问题标签')
+      this.isQuestionActive = true
+      this.isArticleActive = false
+    },
+    handleChangeType () {
+      this.isQuestionActive = false
+      this.isArticleActive = true
     },
     handleSearch () {
       console.log('查询参数', this.queryParam)
@@ -133,6 +329,32 @@ export default {
     handleChangePageNum (currentPage) {
       this.queryParam.pageNum = currentPage
       this.handleSearch()
+    },
+    togglePickUp(item, e) {
+      let target = e.target.parentNode;//点击后获取当前评论
+      item.isExpand = !item.isExpand;//切换状态
+      if (item.isExpand) {
+        //true
+        //当下全文状态
+        target.style.height = "auto";
+      } else {
+        //false
+        // 当下收起状态
+        target.style.height = "3rem";//收起状态的容器高度
+
+      }
+    }
+  },
+  filters: {
+    explainLen: function (item) {
+      if (!item.content) return;
+      if (item.isExpand) {
+        //当下全文状态
+        return item.content.substr(0, item.content.length);//字符串截取
+      } else {
+        // 当下收起状态
+        return item.content.substr(0, 75);//字符串截取100个字
+      }
     }
   }
 }
@@ -194,7 +416,7 @@ export default {
 .TopstoryTabs {
   display: flex;
   height: 58px;
-} 
+}
 .TopstoryTabs-link {
   -webkit-box-align: center;
   align-items: center;
@@ -240,6 +462,7 @@ export default {
   .is-collapsed {
     max-height: 100px;
   }
+  margin-top: 10px;
 }
 
 .RichContent-cover {
@@ -269,7 +492,7 @@ export default {
 }
 
 .RichContent-inner {
-    margin-top: 9px;
+    margin-top: 20px;
     margin-bottom: -4px;
     overflow: hidden;
 }
@@ -321,5 +544,38 @@ export default {
 .Pagination {
   margin: 15px auto;
   text-align: center;
+}
+
+.ContentItem-meta {
+  font-size: 15px;
+  color: #646464;
+  margin-top: 20px;
+}
+.AuthorInfo {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.AnswerItem-authorInfo {
+  margin-top: 10px;
+}
+.AnswerItem-authorInfo--related {
+  margin-top: 0;
+}
+.AuthorInfo-content {
+  -webkit-box-flex: 1;
+  flex: 1 1;
+  margin-left: 14px;
+  overflow: hidden;
+}
+.AuthorInfo-name {
+  font-weight: 600;
+  color: #444;
+}
+.AuthorInfo-job {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 14px;
 }
 </style>
