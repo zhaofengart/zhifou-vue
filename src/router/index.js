@@ -90,7 +90,13 @@ export default new Router({
       path: '/search',
       component: () => import('@/views/searchResult2'),
       hidden: true,
-      meta: { title: '知否问答' }
+      meta: {title: '知否问答'}
+    },
+    {
+      path: '/classDetail',
+      component: () => import('@/views/classDetail'),
+      hidden: true,
+      meta: {title: '知否问答'}
     }
   ]
 })

@@ -53,62 +53,6 @@
                           </router-link>
                         </h2>
                         <div class="ContentItem-meta">
-                        <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                          <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
-                          <div class="AuthorInfo-content">
-                            <div class="AuthorInfo-head">
-                              <span class="AuthorInfo-name">{{item.author.name}}</span>
-                            </div>
-                            <div class="AuthorInfo-job">
-                              <span>{{item.author.job}}</span>
-                            </div>
-                          </div>
-                          <div class="publishTime">
-                            <span>{{parseTime(item.createTime)}}</span>
-                          </div>
-                        </div>
-                        </div>
-                        <div class="RichContent-inner">
-                          {{item | explainLen}}
-                          <a class="RichText ztext CopyrightRichText-richText"  v-show="item.content.length >= 75"
-                                style="color: #1890ff;"
-                                @click.stop="togglePickUp(item,$event)">{{item.isExpand?'　收起':'...全文'}}
-                          </a>
-                        </div>
-                        <div class="RichContent">
-                          <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
-                            <span style="display: inline-flex; align-items: center;">​
-                              <svg-icon icon-class="comment"></svg-icon>
-                            </span>
-                              200条评论
-                            </button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
-                            <span style="display: inline-flex; align-items: center;">
-                              ​<svg-icon icon-class="collect"></svg-icon>
-                            </span>
-                              收藏
-                            </button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
-                            <span style="display: inline-flex; align-items: center;">
-                              ​<svg-icon icon-class="like"></svg-icon>
-                            </span>
-                              喜欢
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
-                      <div class="ContentItem AnswerItem">
-                        <h2 class="ContentItem-title">
-                          <!-- 文章标题 -->
-                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
-                            <span v-html="item.title"></span>
-                          </router-link>
-                        </h2>
-                        <div class="ContentItem-meta">
                           <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
                             <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
                             <div class="AuthorInfo-content">
@@ -134,7 +78,7 @@
                         <div class="RichContent">
                           <div class="ContentItem-actions">
                             <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel" @click="handlevisible(item,$event)">
                             <span style="display: inline-flex; align-items: center;">​
                               <svg-icon icon-class="comment"></svg-icon>
                             </span>
@@ -153,6 +97,30 @@
                               喜欢
                             </button>
                           </div>
+                          <div v-for="item1 in pageClassInfo.commentlist">
+                          <div style="display: none" :id="item.id" >
+                            <div class="ContentItem-meta">
+                              <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
+                                <el-avatar shape="circle" size="large" :src="item1.author.avatar"></el-avatar>
+                                <div class="AuthorInfo-content">
+                                  <div class="AuthorInfo-head">
+                                    <span class="AuthorInfo-name">{{item1.author.name}}</span>
+                                  </div>
+                                  <div class="AuthorInfo-job">
+                                    <span>{{item1.author.job}}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="RichContent-inner">
+                              {{item1 | explainLen}}
+                              <a class="RichText ztext CopyrightRichText-richText"  v-show="item1.content.length >= 20"
+                                 style="color: #1890ff;"
+                                 @click.stop="togglePickUp(item1,$event)">{{item1.isExpand?'　收起':'...全文'}}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
                         </div>
                       </div>
                     </div>
@@ -261,11 +229,11 @@ export default {
             isExpand: false,
           },
           {
-            id: 382058830,
+            id: 382058831,
             "author": {
-              "id": 234,
-              "name": "小小猪排酱中游",
-              "job":  "Java开发",
+              "id": 567,
+              "name": "王有为",
+              "job":  "cpp开发",
               "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
             },
             title: 'C++智能指针详解',
@@ -292,6 +260,26 @@ export default {
               '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
             createTime: new Date(),
             isExpand: false,
+          }
+        ],
+        commentlist: [
+          {
+            "author": {
+              "id": 111,
+              "name": "王有为",
+              "job":  "cpp开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+            },
+            content: "这个文章也太好了吧哈哈哈哈"
+          },
+          {
+            "author": {
+              "id": 222,
+              "name": "小小猪排酱中游",
+              "job":  "Java开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
+            },
+            content: "撒很大声的哈萨克碘化钠会计师的哈SDK"
           }
         ]
       },
@@ -342,6 +330,16 @@ export default {
         // 当下收起状态
         target.style.height = "3rem";//收起状态的容器高度
 
+      }
+    },
+    handlevisible (item,e) {
+      if(document.getElementById(item.id).style.display == "block")
+      {
+        document.getElementById(item.id).style.display = "none";
+      }
+      else
+      {
+        document.getElementById(item.id).style.display = "block"
       }
     }
   },
@@ -527,7 +525,7 @@ export default {
     line-height: 1.6;
 }
 
-.ContentItem-action {
+.ContentItem-action:checked~.comment {
     margin-left: 24px;
     font-size: 14px;
 }
@@ -577,5 +575,8 @@ export default {
   align-items: center;
   margin-top: 5px;
   font-size: 14px;
+}
+.comment {
+  display: none;
 }
 </style>
