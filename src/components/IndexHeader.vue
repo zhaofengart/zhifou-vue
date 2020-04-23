@@ -20,10 +20,20 @@
             <label class="SearchBar-input">
               <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
                 @focus="handleInputFocus"
+                @input="handleInputChange"                
                 @keyup.enter.native="handleSearch">
               <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
               </el-input>
             </label>
+            <!-- 推荐的搜索关键字 -->
+            <el-card v-if="isShowRecommendKeyword" class="HistoryList">
+              <div v-for="(item, index) in recommendKeywordList" :key="item">
+                <div v-show="index < 6" class="HistoryItem" >
+                  <span @click="handleSearchByValue(item)" style="width: 100%; height: 100%;">{{item}}</span>
+                </div>
+              </div>
+            </el-card>
+
             <!-- 搜索历史 -->
             <el-card v-if="isShowSearchHistory" class="HistoryList">
               <template slot="header">
@@ -37,7 +47,7 @@
                 <div v-for="(item, index) in historyList" :key="item">
                   <!-- 默认展示10条记录 -->
                   <div v-show="index < 10 || isShowMoreHistory" class="HistoryItem" >
-                    <span @click="handleSearchInHistory(item)" style="width: 100%; height: 100%;">{{item}}</span>
+                    <span @click="handleSearchByValue(item)" style="width: 100%; height: 100%;">{{item}}</span>
                     <li @click="handleRemoveHistory(item)" class="el-icon-close" ></li>
                   </div>
                 </div>
@@ -107,15 +117,18 @@
 <script>
 import { Notification, MessageBox, Message } from 'element-ui'
 import { mapGetters } from 'vuex'
+import { listRecommendKeyword } from '@/api/search'
 
 export default {
   data () {
     return {
+      isShowRecommendKeyword: false,
       isShowSearchHistory: false,
       isShowMoreHistory: false,
       indexActive: true,
       artileActive: false,
       searchValue: '',
+      recommendKeywordList: [],
       tableData: [{
         date: '2016-05-02',
       },
@@ -214,7 +227,7 @@ export default {
         }
       })
     },
-    handleSearchInHistory(val) {
+    handleSearchByValue(val) {
       this.searchValue = val
       this.handleSearch()
     },
@@ -262,6 +275,25 @@ export default {
       if (this.historyList.length !== 0) {
         this.isShowSearchHistory = true
       }
+    },
+    handleInputChange () {
+      if (this.searchValue.length === 0) {
+        this.isShowSearchHistory = true
+        this.isShowRecommendKeyword = false
+        return
+      } 
+      
+      this.isShowSearchHistory = false
+
+      this.getRecommendKeywordList()
+    },
+    getRecommendKeywordList () {
+      listRecommendKeyword().then(resp => {
+        this.recommendKeywordList = resp.data
+        if(this.recommendKeywordList.length !== 0) {          
+          this.isShowRecommendKeyword = true
+        }
+      })
     }
   }
 }
