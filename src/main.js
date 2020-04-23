@@ -19,7 +19,7 @@ import '@/assets/styles/ruoyi.scss' // ruoyi css
 import '@/assets/styles/zhifou.scss' // zhifou.css
 
 import './assets/icons' // icon
-// import './permission' // permission control
+import './permission' // permission control
 
 import { parseTime, resetForm, addDateRange, download } from '@/utils/ruoyi'
 import { escapeStringHTML, mdToHtml } from '@/utils/filters'

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 
 Vue.use(Router)
 /**
@@ -16,12 +15,6 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld,
-      meta: { title: '知否问答' }
-    },
-    {
-      path: '/index2',
       component: () => import('@/views/index2'),
       hidden: true,
       meta: { title: '知否问答' }
@@ -62,12 +55,12 @@ export default new Router({
       hidden: true,
       meta: { title: '知否问答' }
     },
-    {
-      path: '/index',
-      component: () => import('@/views/index'),
-      hidden: true,
-      meta: { title: '知否问答' }
-    },
+    // {
+    //   path: '/index',
+    //   component: () => import('@/views/index'),
+    //   hidden: true,
+    //   meta: { title: '知否问答' }
+    // },
     {
       path: '/writeclass',
       component: () => import('@/views/writeclass'),

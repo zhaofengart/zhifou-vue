@@ -17,13 +17,13 @@
                     <a class="TopstoryTabs-link" :class="{'is-active': isArticleActive}" @click="handleChangeType">文章</a>
                   </div>
                 </div>
-                <!-- 文章列表 -->
+                <!-- 问题列表 -->
                 <div class="Topstory-recommend" v-if="isQuestionActive==true">
                   <div class="">
                     <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item) in pageInfo.list" :key="item.id">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
-                          <!-- 文章标题 -->
+                          <!-- 问题标题 -->
                           <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
                             <span v-html="item.title"></span>
                           </router-link>
