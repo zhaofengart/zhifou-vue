@@ -25,10 +25,10 @@
               </el-table-column>
             </el-table>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="content">
             <div class="contentEditor">
               <!-- <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor> -->
-              <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
+              <MarkdownEditor v-model="form.content" :maxNum="10" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
             </div>
           </el-form-item>
           <el-form-item>
@@ -109,6 +109,9 @@ export default {
     },
     handlePublishQuestion () {
       console.log(this.form)
+      if (!this.validateLengthOfContent()) {
+        return
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('校验成功', this.form)
@@ -134,6 +137,16 @@ export default {
           this.showRecommendQuestion = false
         }
       })
+    },
+    validateLengthOfContent () {
+      var length = this.form.content.length
+      if (length > 1000) {
+        this.$message({
+          showClose: true,
+          message: '您已超过1000字',
+          type: 'warning'
+        });
+      }
     },
     handleFullScreenChange (isFull) {
       this.isFullScreen = isFull

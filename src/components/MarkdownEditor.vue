@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mavon-editor v-model="content" ref="md" codeStyle="atom-one-light" @imgAdd="$imgAdd" @change="change" @fullScreen="handleSwitchFullScreen" :placeholder="placeholder" class="mavonEditor"/>
+    <mavon-editor v-model="content" ref="md" codeStyle="atom-one-light" @imgAdd="$imgAdd" @imgDel="$imgDel" @change="change" @fullScreen="handleSwitchFullScreen" :placeholder="placeholder" class="mavonEditor"/>
   </div>
 </template>
 <script>
@@ -25,6 +25,10 @@ export default {
     },
     placeholder: {
       type: String
+    },
+    maxNum: {
+      type: Number,
+      default: 20
     }
   },
   components: {
@@ -32,6 +36,7 @@ export default {
   },
   data() {
     return {
+      pictureNum: 0,
       content: this.value,
       html:'',
       configs: {}
@@ -45,15 +50,30 @@ export default {
   methods: {
     // 将图片上传到服务器，返回地址替换到md中
     $imgAdd(pos, $file){
+        if (this.pictureNum >= this.maxNum) {
+            this.$message({
+              showClose: true,
+              message: '上传图片数量已达上限',
+              type: 'warning'
+            });
+            this.$refs.md.$refs.toolbar_left.$imgDelByFilename($file)
+            this.pictureNum++
+            return
+        }
+
         let formdata = new FormData();
         formdata.append('file', $file)
 
         upload(formdata).then(res => {
             console.log(res.data);
             this.$refs.md.$img2Url(pos, res.data);
+            this.pictureNum++
         }).catch(err => {
             console.log(err)
         })
+    },
+    $imgDel () {
+      this.pictureNum--
     },
     // 所有操作都会被解析重新渲染
     change(value, render){
