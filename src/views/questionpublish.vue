@@ -65,17 +65,26 @@ export default {
       contentPlaceholder: '输入问题背景、条件等详细信息（选填）',
       // 表单参数
       form: {
+        title: '',
         content: ''
       },
       // 表单校验
       rules: {
         title: [
-          { min: 4, message: '至少输入4个字', trigger: 'blur'},
-          { max: 49, message: '已超过49个字', trigger: 'blur'},
           {
             pattern: /[\?|？]$/,
             message: "你还没有给问题添加问号",
             trigger: ['blur']
+          },
+          { validator: (rule, value, callback) => {
+              if (value.trim().length < 4) {
+                callback(new Error('至少输入4个字'))
+              } else if (value.trim.length >= 50){
+                callback(new Error('已超过49个字'))
+              } else {
+                callback()
+              }
+            }, trigger: ['blur', 'change']
           }
         ]
       }
@@ -83,7 +92,7 @@ export default {
   },
   computed : {
     btnDisabled () {
-      if (this.form.title === undefined || this.form.title.length === 0) {
+      if (this.form.title === undefined || this.form.title.trim().length === 0) {
         return true
       }
       return false
@@ -102,8 +111,7 @@ export default {
       console.log(this.form)
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log('校验成功')
-          console.log(this.form)
+          console.log('校验成功', this.form)
           addQuestion(this.form).then(response => {
             Message.success("发布成功")
             this.$router.push({path: '/'})
@@ -112,7 +120,8 @@ export default {
       })
     },
     handleRecommendQuestion () {
-      if (this.form.title.trim().length === 0) {
+      var trimTitle = this.form.title.trim()
+      if (trimTitle.length === 0 || trimTitle === '?' || trimTitle === '？') {
         this.showRecommendQuestion = false
         return
       }

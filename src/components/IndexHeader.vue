@@ -21,7 +21,7 @@
               <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
                 @focus="handleInputFocus"
                 @input="handleInputChange"                
-                @keyup.enter.native="handleSearch">
+                @keyup.enter.native="handleSearchByValue(searchValue)">
               <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
               </el-input>
             </label>
@@ -228,6 +228,18 @@ export default {
       })
     },
     handleSearchByValue(val) {
+      console.log('val', val)
+      if (val.trim().length === 0 ) {
+        this.$message({
+          showClose: true,
+          message: '请输入你要搜索的内容',
+          type: 'warning'
+        });
+        this.searchValue = ''
+        this.isShowRecommendKeyword = false
+        return
+      }
+
       this.searchValue = val
       this.handleSearch()
     },
@@ -272,12 +284,14 @@ export default {
       this.$store.dispatch('clearHistory')
     },
     handleInputFocus () {
-      if (this.historyList.length !== 0) {
+      if (this.historyList.length !== 0 && this.searchValue.length === 0) {
         this.isShowSearchHistory = true
+      } else if (this.searchValue.length !== 0) {
+        this.getRecommendKeywordList()
       }
     },
     handleInputChange () {
-      if (this.searchValue.length === 0) {
+      if (this.searchValue.trim().length === 0) {
         this.isShowSearchHistory = true
         this.isShowRecommendKeyword = false
         return
@@ -288,7 +302,7 @@ export default {
       this.getRecommendKeywordList()
     },
     getRecommendKeywordList () {
-      listRecommendKeyword().then(resp => {
+      listRecommendKeyword(this.searchValue).then(resp => {
         this.recommendKeywordList = resp.data
         if(this.recommendKeywordList.length !== 0) {          
           this.isShowRecommendKeyword = true
