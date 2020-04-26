@@ -71,7 +71,8 @@
                   <button type="button" class="Button Button-plain" @click="questionRichTextCollapsed = !questionRichTextCollapsed">
                     {{questionRichTextCollapsed? '显示全部': '收起'}}
                     <span style="display: inline-flex; align-items: center;">​
-                      <svg-icon icon-class="arrow-up"></svg-icon>
+                      <svg-icon v-if="questionRichTextCollapsed" icon-class="arrow-down"></svg-icon>
+                      <svg-icon v-else icon-class="arrow-up"></svg-icon>
                     </span>
                   </button>
                 </div>
@@ -105,7 +106,6 @@
                       </div>
                       <!-- 回答表单 -->
                       <div class="AnswerForm">
-                        <!-- <Editor placeholder="写回答..." class="editor"></Editor> -->
                         <MarkdownEditor v-model="answerForm.content" v-bind:content.sync="answerForm.content" v-bind:isFull.sync="isFullScreen"></MarkdownEditor>
                         <div class="AnswerForm-footer" :class="{ 'is-write-answer-footer-fixed': isFullScreen}">
                           <div class="AnswerForm-footerContent">
@@ -331,6 +331,11 @@ export default {
     },
     // 提交回答
     handleSubmitAnswer () {
+      if (this.answerForm.content.trim().length === 0) {
+        this.$message({ showClose: true, message: '回答内容不能为空', type: 'warning' })
+        return
+      }
+
       console.log(this.answerForm)
       if (this.answerForm.content !== '') {
         addAnswer(this.answerForm).then(response => {

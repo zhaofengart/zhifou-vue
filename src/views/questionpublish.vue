@@ -27,7 +27,6 @@
           </el-form-item>
           <el-form-item prop="content">
             <div class="contentEditor">
-              <!-- <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor> -->
               <MarkdownEditor v-model="form.content" :maxNum="10" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
             </div>
           </el-form-item>
@@ -79,12 +78,25 @@ export default {
           { validator: (rule, value, callback) => {
               if (value.trim().length < 4) {
                 callback(new Error('至少输入4个字'))
-              } else if (value.trim.length >= 50){
+              } else if (value.trim.length >= 50) {
                 callback(new Error('已超过49个字'))
               } else {
                 callback()
               }
             }, trigger: ['blur', 'change']
+          }
+        ],
+        content: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.form.content.length > 1000) {
+                this.$message({ showClose: true, message: '您已超过1000字', type: 'warning' })
+                // 返回空格才不会显示默认的Error
+                callback(new Error(' '))
+              } else {
+                callback()
+              }
+            }, trigger: ['blur']
           }
         ]
       }
@@ -109,9 +121,7 @@ export default {
     },
     handlePublishQuestion () {
       console.log(this.form)
-      if (!this.validateLengthOfContent()) {
-        return
-      }
+
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log('校验成功', this.form)
@@ -137,19 +147,6 @@ export default {
           this.showRecommendQuestion = false
         }
       })
-    },
-    validateLengthOfContent () {
-      var length = this.form.content.length
-      if (length > 1000) {
-        this.$message({
-          showClose: true,
-          message: '您已超过1000字',
-          type: 'warning'
-        });
-      }
-    },
-    handleFullScreenChange (isFull) {
-      this.isFullScreen = isFull
     }
   }
 }
