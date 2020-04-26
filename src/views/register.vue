@@ -108,15 +108,12 @@ export default {
       registerRules: {
         workNum: [
           { required: true, trigger: 'blur', message: '工号不能为空' },
-          {
-            pattern: /^S[0-9]{4}$/,
-            message: "工号不符合规范",
-            trigger: "blur"
-          }
+          { pattern: /^S[0-9]{4}$/, message: "工号不符合规范", trigger: "blur" }
         ],
         name: [
           { required: true, trigger: 'blur', message: '姓名不能为空' },
-          { max: 15, message: '姓名不能超过15个汉字', trigger: 'blur'},
+          { pattern: /^[\u2E80-\u9FFF]+$/, message: '姓名必须全为汉字', trigger: ['blur', 'change'] },
+          { max: 15, message: '姓名不能超过15个汉字', trigger: ['blur', 'change'] },
         ],
         departmentId: [
           { required: true, trigger: 'blur', message: '部门不能为空' }
@@ -126,26 +123,21 @@ export default {
         ],
         email: [
           { required: true, message: '邮箱地址不能为空', trigger: 'blur' },
-          {
-            type: 'email',
-            message: '请输入正确的邮箱地址',
-            trigger: ['blur', 'change']
-          }
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
         password: [
           { required: true, trigger: 'blur', message: '密码不能为空' },
-          { min: 6, message: '请输入6位密码', trigger: 'blur'},
-          { max: 6, message: '请输入6位密码', trigger: 'blur'}
+          { min: 6, max: 6, message: '请输入6位密码', trigger: 'blur'}
         ],
         confirmPassword: [
           { required: true, trigger: 'blur', message: '确认密码不能为空' },
           { validator: (rule, value, callback) => {
-              if(value === ''){
+              if(value === '') {
                 callback(new Error('请再次输入密码'))
-              }else if(value !== this.registerForm.password){
+              } else if(value !== this.registerForm.password) {
                 callback(new Error('两次输入密码不一致'))
-              }else{
-                callback( )
+              } else {
+                callback()
               }
             }, trigger: ['blur', 'change']
           }
