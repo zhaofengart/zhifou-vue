@@ -1,0 +1,77 @@
+.el-tabs__item {
+  font-size: 16px;
+}
+.Button {
+  display: inline-block;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 32px;
+  color: #8590a6;
+  text-align: center;
+  cursor: pointer;
+  background: none;
+  border: 1px solid;
+  border-radius: 3px;
+}
+.SearchBar-searchButton {
+  margin-left: 12px;
+  padding: 0 12px;
+  background: transparent;
+  border-color: transparent;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.SearchBar-askButton {
+  width: 60px;
+  height: 34px;
+  padding: 0 14px;
+  margin-left: 16px;
+  text-align: center;
+}
+.Button--link, .Button--plain {
+height: auto;
+padding: 0;
+line-height: inherit;
+background-color: transparent;
+border: none;
+border-radius: 0;
+}
+
+.ListQuestionItem-writeAnswerButton {
+  line-height: 28px;
+  padding: 0;
+  width: 94px;
+}
+
+.Button--blue {
+  color: #0084ff;
+  border-color: #0084ff;
+}
+
+.Button--grey {
+  color: #8590a6;
+  border-color: #8590a6;
+}
+.Button--primary.Button--blue {
+  color: #fff;
+  background-color: #0084ff;
+}
+.ContentItem-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 10px 20px;
+  margin: 0 -20px -10px;
+  color: #646464;
+  background: #fff;
+  clear: both;
+}
+.ContentItem-action {
+  margin-left: 24px;
+  font-size: 14px;
+}
+
