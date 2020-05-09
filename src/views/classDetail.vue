@@ -1,105 +1,61 @@
 <template>
-  <div class="container">
-    <!-- 页面头部 -->
+  <div>
     <IndexHeader></IndexHeader>
-
-    <!-- 主要内容 -->
-    <div class="my-main">
-      <div>
-        <div class="TopStory-container">
-          <div class="Topstory-mainColumn">
-            <div class="Topstory-mainColumnCard">
+    <div class="QuestionDetail-main">
+      <div class="QuestionPage">
+        <div class="Question-main">
+          <div class="Question-mainColumn">
+            <div class="QuestionAnswers-answers">
               <el-card>
-                <!-- 文章列表 -->
-                <div class="Topstory-recommend">
-                  <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
-                      <div class="ContentItem AnswerItem">
-                        <h2 class="ContentItem-title">
-                          <!-- 文章标题 -->
-                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
-                            <span v-html="item.title"></span>
-                          </router-link>
-                        </h2>
-                        <div class="ContentItem-meta">
-                          <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                            <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
-                            <div class="AuthorInfo-content">
-                              <div class="AuthorInfo-head">
-                                <span class="AuthorInfo-name">{{item.author.name}}</span>
-                              </div>
-                              <div class="AuthorInfo-job">
-                                <span>{{item.author.job}}</span>
-                              </div>
-                            </div>
-                            <div class="publishTime">
-                              <span>{{parseTime(item.createTime)}}</span>
-                            </div>
+                <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
+                  <div class="ContentItem AnswerItem">
+                    <div class="ContentItem-meta">
+                      <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
+                        <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
+                        <div class="AuthorInfo-content">
+                          <div class="AuthorInfo-head">
+                            <span class="AuthorInfo-name">{{item.author.name}}</span>
+                          </div>
+                          <div class="AuthorInfo-job">
+                            <span>{{item.author.job}}</span>
                           </div>
                         </div>
-                        <div class="RichContent-inner" v-html="item.content"></div>
-                        <div class="RichContent">
-                          <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel" @click="handlevisible(item,$event)">
-                            <span style="display: inline-flex; align-items: center;">​
-                              <svg-icon icon-class="comment"></svg-icon>
-                            </span>
-                              200条评论
-                            </button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
-                            <span style="display: inline-flex; align-items: center;">
-                              ​<svg-icon icon-class="collect"></svg-icon>
-                            </span>
-                              收藏
-                            </button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
-                            <span style="display: inline-flex; align-items: center;">
-                              ​<svg-icon icon-class="like"></svg-icon>
-                            </span>
-                              喜欢
-                            </button>
-                          </div>
-                          <div v-for="item1 in pageClassInfo.commentlist">
-                            <div style="display: none" :id="item.id" >
-                              <div class="ContentItem-meta">
-                                <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                                  <el-avatar shape="circle" size="large" :src="item1.author.avatar"></el-avatar>
-                                  <div class="AuthorInfo-content">
-                                    <div class="AuthorInfo-head">
-                                      <span class="AuthorInfo-name">{{item1.author.name}}</span>
-                                    </div>
-                                    <div class="AuthorInfo-job">
-                                      <span>{{item1.author.job}}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="RichContent-inner">
-                                {{item1 | explainLen}}
-                                <a class="RichText ztext CopyrightRichText-richText"  v-show="item1.content.length >= 20"
-                                   style="color: #1890ff;"
-                                   @click.stop="togglePickUp(item1,$event)">{{item1.isExpand?'　收起':'...全文'}}
-                                </a>
-                              </div>
-                            </div>
-                          </div>
+                        <div class="publishTime">
+                          <span>{{parseTime(item.createTime)}}</span>
                         </div>
+                      </div>
+                    </div>
+                    <div class="RichContent RichContent--unescapable">
+                      <div class="RichContent-inner">
+                        <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="item.content"></span>
+                      </div>
+                      <div
+                        class="ContentItem-actions"
+                        :class="{ 'Sticky': currentIndex === -1, 'RichContent-actions': currentIndex === -1, 'is-fixed': currentIndex === -1 && isContentActionsFixed , 'is-bottom': currentIndex === -1, 'specialContentItem-actions': currentIndex === -1}"
+                        style="height: 54px;">
+                        <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                          <span style="display: inline-flex; align-items: center;">​
+                            <svg-icon icon-class="comment"></svg-icon>
+                          </span>
+                          评论
+                        </button>
+                        <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                          <span style="display: inline-flex; align-items: center;">
+                              <svg-icon icon-class="collect"></svg-icon>
+                          </span>
+                          收藏
+                        </button>
+                        <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                          <span style="display: inline-flex; align-items: center;">
+                              <svg-icon icon-class="like"></svg-icon>
+                          </span>
+                          喜欢
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </el-card>
-
-            </div>
-          </div>
-          <!-- 侧边布局 -->
-          <div class="GlobalSideBar">
-            <div>
-              <!-- 快捷入口 -->
-              <QuickEntry></QuickEntry>
-              <!-- 排行榜 -->
-              <Leaderboard></Leaderboard>
             </div>
           </div>
         </div>
@@ -108,331 +64,333 @@
   </div>
 </template>
 <script>
-  import QuickEntry from '@/components/QuickEntry'
-  import Leaderboard from '@/components/Leaderboard'
-  import { searchQuestion } from '@/api/question'
+  import { mapGetters } from 'vuex'
+  import Editor from '@/components/Editor'
+  import MarkdownEditor from '@/components/MarkdownEditor'
+  import {Message} from 'element-ui'
 
   export default {
     components: {
-      Leaderboard,
-      QuickEntry
+      Editor,
+      MarkdownEditor
     },
     data () {
       return {
-        queryParam: {
-          searchTitle: '',
-          sort: 1,
-          pageNum: 1,
-          pageSize: 10
-        },
-        pageClassInfo: {
-          total: 60,
-          totalPage: 10,
-          list: [
-            {
-              id: 382058830,
-              "author": {
-                "id": 234,
-                "name": "小小猪排酱中游",
-                "job":  "Java开发",
-                "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
-              },
-              title: 'C++智能指针详解',
-              content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-                '\n' +
-                '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-                '\n' +
-                '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-                '\n' +
-                '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-                '\n' +
-                '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-                '\n' +
-                '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-                '\n' +
-                '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-                '\n' +
-                '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-                '\n' +
-                '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-                '\n' +
-                '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-                '\n' +
-                '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
-              createTime: new Date(),
-              isExpand: false,
+        currentIndex: -1,
+        isContentActionsFixed: true,
+        answerList: [
+          {
+            "id": 123,
+            "content": '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
+              '\n' +
+              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
+              '\n' +
+              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
+            "createTime": "2020-01-01 15:30",
+            "author": {
+              "id": 234,
+              "name": "小小猪排酱中游",
+              "job":  "Java开发",
+              "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
             }
-          ],
-          commentlist: [
-            {
-              "author": {
-                "id": 111,
-                "name": "王有为",
-                "job":  "cpp开发",
-                "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
-              },
-              content: "这个文章也太好了吧哈哈哈哈"
-            },
-            {
-              "author": {
-                "id": 222,
-                "name": "小小猪排酱中游",
-                "job":  "Java开发",
-                "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
-              },
-              content: "撒很大声的哈萨克碘化钠会计师的哈SDK"
-            }
-          ]
-        },
+          }
+        ],
       }
-    },
-    computed: {
-
     },
     created () {
-      this.queryParam.searchTitle = this.$route.query.value
-      this.handleSearch()
+    },
+    mounted () {
+      window.addEventListener('scroll', this.handleScroll)
     },
     methods: {
-      handleSearch () {
-        console.log('查询参数', this.queryParam)
-        searchQuestion(this.queryParam).then(resp => {
-          console.log('获取的问题列表', resp.data)
-          //this.pageInfo = resp.data
-        })
+      handleScroll () {
+          var item = this.$refs.answerItem
+          if (this.isBottomReachToBottomOfBrowser(item) || this.isTopReachToBottomOfBrowser(item)) {
+            this.isContentActionsFixed = false
+            this.currentIndex = 1
+          } else {
+            this.isContentActionsFixed = true
+          }
       },
-      togglePickUp(item, e) {
-        let target = e.target.parentNode;//点击后获取当前评论
-        item.isExpand = !item.isExpand;//切换状态
-        if (item.isExpand) {
-          //true
-          //当下全文状态
-          target.style.height = "auto";
+      isBottomReachToBottomOfBrowser (item) {
+        let H = item.offsetHeight + item.offsetTop
+        let scrollHeightToBottom = H - document.documentElement.clientHeight + 54
+        let hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+        if (hiddenHeight >= scrollHeightToBottom) {
+          return true
         } else {
-          //false
-          // 当下收起状态
-          target.style.height = "3rem";//收起状态的容器高度
-
+          return false
         }
       },
-      handlevisible (item,e) {
-        if(document.getElementById(item.id).style.display == "block")
-        {
-          document.getElementById(item.id).style.display = "none";
-        }
-        else
-        {
-          document.getElementById(item.id).style.display = "block"
-        }
-      }
-    },
-    filters: {
-      explainLen: function (item) {
-        if (!item.content) return;
-        if (item.isExpand) {
-          //当下全文状态
-          return item.content.substr(0, item.content.length);//字符串截取
+      isTopReachToBottomOfBrowser (item) {
+        let H = item.offsetHeight + item.offsetTop
+        let scrollHeightToTop = item.offsetTop - document.documentElement.clientHeight + 150
+        let hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+        if (hiddenHeight < scrollHeightToTop) {
+          return true
         } else {
-          // 当下收起状态
-          return item.content.substr(0, 75);//字符串截取100个字
+          return false
         }
-      }
+      },
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-
-  // 问题、文章列表
-  .my-main {
-    display: block;
-    margin-top: 62px;
-    margin-bottom: 50px;
-  }
-  .TopStory-container {
-    display: -webkit-box;
-    display: -ms-flexbox;
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .QuestionDetail-main {
     display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    align-items: flex-start;
+    justify-content: center;
+    margin-top: 52px;
+  }
+  .QuestionPage {
+    width: 100%;
+    position: relative;
+  }
+  .QuestionHeader {
+    width: 100%;
+    position: relative;
+    min-width: 1032px;
+    padding: 16px 0;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+  }
+  .QuestionHeader-content {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
     width: 1032px;
+    height: 100%;
     padding: 0 16px;
     margin: 0 auto;
   }
-  .Topstory-mainColumn {
-    -ms-flex-negative: 0;
-    flex-shrink: 0;
-    margin-right: 10px;
-    margin-bottom: 0;
+  .QuestionHeader-main {
     width: 694px;
-  }
-
-  .css-w3ttmg {
+    padding-left: 20px;
     box-sizing: border-box;
-    margin: 0;
-    min-width: 0;
-    color: #175199;
-    display: block;
-    cursor: pointer;
-    font-size: 0;
   }
-  .css-vnkjjr {
-    box-sizing: border-box;
-    margin: 0;
-    min-width: 0;
-    max-width: 100%;
-    height: auto;
-    width: 100%;
-    border-radius: 2px;
-    margin-bottom: 10px;
-    object-fit: cover;
-  }
-  .Topstory-mainColumnCard {
-    -webkit-box-shadow: 0 1px 3px rgba(26,26,26,.1);
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
-  }
-  .box-card {
-    width: 400px;
-  }
-  .TopstoryTabs {
-    display: flex;
-    height: 58px;
-  }
-  .TopstoryTabs-link {
-    -webkit-box-align: center;
-    align-items: center;
-    display: flex;
-    font-size: 16px;
-    margin: 0 22px;
-  }
-  .TopstoryTabs-link.is-active {
-    color: #0084ff;
-    font-weight: 500;
-  }
-  // 列表
-  .Topstory-mainColumnCard .el-card:not(.Topstory-tabCard) {
-    margin-bottom: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    border-bottom: 1px solid #f0f2f7;
-  }
-  .TopstoryItem {
-    border-bottom: 1px solid #e6ebf5;
-    border-radius: 0;
-    overflow: visible;
-    overflow: initial;
-    position: relative;
-    padding: 16px 20px;
-  }
-  .TopstoryItem-isRecommend {
-    padding: 20px;
-  }
-
-  .ContentItem-title {
-    font-size: 18px;
+  .QuestionHeader-title {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 22px;
     font-weight: 600;
     font-synthesis: style;
-    line-height: 1.6;
+    line-height: 32px;
     color: #1a1a1a;
-    margin-top: -4px;
-    margin-bottom: -4px;
+  }
+  .QuestionHeader-detail {
+    min-height: 10px;
+  }
+  .QuestionRichText--expandable.QuestionRichText--collapsed {
+    max-height: 51px;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-transition: color .14s ease-out;
+    transition: color .14s ease-out;
+  }
+  .QuestionRichText--expandable.QuestionRichText--collapsed .RichText {
+    pointer-events: none;
+    -webkit-line-clamp: 2;
+    white-space: nowrap;
+    // text-overflow: ellipsis;
+  }
+  .QuestionRichText {
+    font-size: 15px;
+    line-height: 25px;
+  }
+  .ztext {
+    word-break: break-word;
+    line-height: 1.6;
+  }
+  .QuestionHeader-actions {
+    display: flex;
+    margin-left: 16px;
   }
 
-  .RichContent {
-    line-height: 1.67;
-    .is-collapsed {
-      max-height: 100px;
-    }
-    margin-top: 10px;
-    //position: fixed;
-    //top: 660.5px;
+
+  .QuestionHeader-side {
+    width: 296px;
+    padding-right: 20px;
+    text-align: right;
   }
 
-  .RichContent-cover {
-    position: relative;
-    width: 190px;
-    height: 105px;
-    margin-top: -2px;
-    margin-right: 18px;
-    margin-bottom: 4px;
-    float: left;
-    overflow: hidden;
-    background-position: 50%;
-    background-size: cover;
-    border-radius: 4px;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  .RichContent-cover-inner {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    overflow: hidden;
-  }
 
-  .RichContent-inner {
-    margin-top: 20px;
-    margin-bottom: -4px;
-    overflow: hidden;
+  .QuestionHeader-footer {
+    padding-bottom: 12px;
+    margin-top: 4px;
+    margin-bottom: -12px;
+    background: #fff;
   }
-  .RichContent.is-collapsed .RichContent-inner {
-    max-height: 100px;
-  }
-  .ContentItem-actions {
+  .QuestionHeader-footer-inner, .QuestionHeader-footer-main {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    padding: 10px 20px;
-    margin: 0 -20px -10px;
-    color: #646464;
-    background: #fff;
-    clear: both;
+  }
+  .QuestionHeader-footer-inner {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    width: 1032px;
+    height: 100%;
+    padding: 0 16px;
+    margin: 0 auto;
+  }
+  .QuestionHeader-footer-main {
+    margin-top: 4px;
+    min-width: 694px;
+    width: auto;
+  }
+  .QuestionHeader-main {
+    width: 694px;
+    padding-left: 20px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .QuestionButtonGroup {
+    display: inline-block;
+    margin: 0 -8px;
+  }
+  .FollowButton {
+    min-width: 96px;
+  }
+  .QuestionButtonGroup .Button {
+    margin: 0 8px;
   }
 
-  .ContentItem-more {
-    padding: 0;
-    margin-left: 4px;
-    color: #175199;
+  .QuestionButtonGroup+.QuestionHeaderActions {
+    margin-left: 16px;
   }
-
-  .RichContent.is-collapsed .CopyrightRichText-richText {
-    pointer-events: none;
+  .QuestionHeaderActions {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
   }
-  .ztext {
-    word-break: break-word;
+  .NumberBoard {
+    display: flex;
+  }
+  .QuestionFollowStatus-counts {
+    width: 240px;
+    margin-left: auto;
+  }
+  .NumberBoard-item {
+    -webkit-box-flex: 1;
+    flex: 1 1;
+  }
+  .NumberBoard--divider .NumberBoard-item+.NumberBoard-item .NumberBoard-itemInner {
+    border-left: 1px solid #ebebeb;
+  }
+  .NumberBoard-itemInner {
+    text-align: center;
     line-height: 1.6;
   }
-
-  .ContentItem-action:checked~.comment {
-    margin-left: 24px;
+  .QuestionFollowStatus-counts .NumberBoard-itemInner {
+    padding: 0 8px;
+  }
+  .NumberBoard-itemName {
     font-size: 14px;
+    color: #8590a6;
+  }
+  .NumberBoard-itemValue {
+    display: inline-block;
+    font-size: 18px;
+    color: #1a1a1a;
+    font-weight: 600;
   }
 
-
-  // 第二部分
-  .GlobalSideBar {
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1;
-    flex: 1 1;
-    font-size: 14px;
+  // 回答列表
+  .Question-main {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: start;
+    align-items: flex-start;
+    margin: 10px auto;
+    padding: 0 16px;
+    width: 1032px;
+    min-height: 100vh;
+  }
+  .Question-mainColumn {
+    // width: 694px;
+    width: 1032px;
+    padding-bottom: 20px;
+  }
+  .QuestionAnswers-answers {
+    margin-bottom: 10px;
+  }
+  .AnswersNavWrapper {
+    overflow: visible;
+    overflow: initial;
+  }
+  .el-card:last-child {
+    margin-bottom: 0;
+  }
+  .List-header {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: flex-end;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 50px;
+    margin: 0 20px;
+    // border-bottom: 1px solid #f6f6f6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .List-item {
+    position: relative;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f2f7;
   }
 
-  .Pagination {
-    margin: 15px auto;
-    text-align: center;
+  .RichContent {
+    line-height: 1.67;
   }
-
+  .RichContent--unescapable.is-collapsed {
+    position: relative;
+    overflow: hidden;
+  }
+  .RichContent-inner {
+    height: auto;
+    margin-top: 9px;
+    margin-bottom: -4px;
+    overflow: hidden;
+  }
+  .RichContent.is-collapsed .RichContent-inner {
+    max-height: 200px;
+  }
+  .ContentItem-rightButton {
+    margin-left: auto;
+  }
+  .RichContent--unescapable.is-collapsed .ContentItem-rightButton {
+    // position: absolute;
+    z-index: 1;
+    // bottom: 30px;
+    left: 0;
+    width: 100%;
+    color: #175199;
+    font-size: 15px;
+  }
   .ContentItem-meta {
     font-size: 15px;
     color: #646464;
-    margin-top: 20px;
   }
   .AuthorInfo {
     display: flex;
@@ -461,8 +419,107 @@
     margin-top: 5px;
     font-size: 14px;
   }
-  .comment {
+  .RichContent-actions.is-fixed {
+    -webkit-animation: slideInUp .2s;
+    animation: slideInUp .2s;
+    animation-duration: 0.2s;
+    animation-timing-function: ease;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    animation-fill-mode: none;
+    animation-play-state: running;
+    animation-name: slideInUp;
+  }
+  @keyframes slideInUp {
+    0% {
+      transform: translate3d(0,100%,0);
+      visibility: visible;
+    }
+  }
+
+  .ContentItem-actions.is-fixed {
+    // margin: 0;
+    -webkit-box-shadow: 0 -1px 3px rgba(26,26,26,.1);
+    box-shadow: 0 -1px 3px rgba(26,26,26,.1);
+  }
+  .Sticky.is-absolute, .Sticky.is-fixed {
+    box-sizing: border-box;
+  }
+  .Sticky.is-fixed {
     position: fixed;
-    top: 100px;
+    z-index: 2;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+  .ContentItem-arrowIcon.is-active {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  .specialContentItem-actions {
+    width: 998px;
+    bottom: 0px;
+    // left: 259.6px;
+    margin: 0 -20px;
+  }
+
+  // 写回答对话框
+  .QuestionAnswers-answerAdd.el-card {
+    margin-bottom: 10px;
+  }
+  .QuestionAnswers-answerAdd {
+    min-height: 282px;
+  }
+  .AnswerAdd-header {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 16px 20px;
+  }
+  .AnswerForm {
+    position: relative;
+  }
+  .editor {
+    min-height: 100px;
+    height: 300px;
+  }
+  .AnswerForm-footer {
+    position: relative;
+    background: #fff;
+  }
+  .AnswerForm-footerContent {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    height: 52px;
+    padding: 12px 24px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .Button--primary.Button--blue {
+    color: #fff;
+    background-color: #0084ff;
+  }
+  .AnswerForm-submit {
+    margin-left: 22px;
+  }
+  .AnswerForm-footerContent {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 52px;
+    padding: 12px 24px;
+    box-sizing: border-box;
+  }
+
+  .is-write-answer-footer-fixed {
+    position: fixed;
+    z-index: 2000;
+    bottom: 0px;
   }
 </style>

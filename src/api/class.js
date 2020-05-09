@@ -7,3 +7,11 @@ export function addClass (data) {
     data: data
   })
 }
+
+export function searchArticle (query) {
+  return request({
+    url: '/article/title/search',
+    method: 'get',
+    params: query
+  })
+}
