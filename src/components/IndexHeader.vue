@@ -182,9 +182,9 @@ export default {
     if (this.$route.path === '/') {
       this.$refs.indexLink.className += ' is-active'
     }
-    // else if (this.$route.path === '/questionpublish'){
-    //   this.$refs.articleLink.className +=  ' is-active'
-    // }
+    else if (this.$route.path === '/articlelist'){
+      this.$refs.articleLink.className +=  ' is-active'
+    }
     console.log('mounted')
   },
   created () {

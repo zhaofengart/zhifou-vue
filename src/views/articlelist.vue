@@ -57,7 +57,7 @@
                       50喜欢
                     </button>
                   </div>
-                  <div v-for="item1 in pageClassInfo.commentlist">
+                  <div v-for="item1 in pageClassInfo.commentlist" :key="item1.id">
                     <div style="display: none" :id="item.id" >
                       <div class="ContentItem-meta">
                         <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
