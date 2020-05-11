@@ -34,24 +34,24 @@
         <div class="ProfileMain-header">
           <el-tabs>
             <el-tab-pane label="我的提问" class="tab-pane">
-              <div class="List-item" v-for="i in (1,6)" :key="i">
+              <div class="List-item" v-for="item in pageInfo.list" :key="item.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
-                    <a href="">如何看待抖音直播</a>
+                    <a href="">{{item.title}}</a>
                   </div>
                 </h2>
                 <div class="ContentItem-status">
                   <span class="ContentItem-statusItem">2020-03-31</span>
-                  <span class="ContentItem-statusItem">0 个回答</span>
-                  <span class="ContentItem-statusItem">1 个关注</span>
+                  <span class="ContentItem-statusItem">{{item.answeredNum}} 个回答</span>
+                  <span class="ContentItem-statusItem">{{item.followNum}} 个关注</span>
                 </div>
               </div>
             </el-tab-pane>
             <el-tab-pane label="我的回答">
-              <div class="List-item" v-for="i in (1,6)" :key="i">
+              <div class="List-item" v-for="item in answerList" :key="item.question.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
-                    <a href="">如何看待抖音直播</a>
+                    <a href="">{{item.question.title}}</a>
                   </div>
                 </h2>
                 <div class="ContentItem-meta">
@@ -63,7 +63,7 @@
                         <span class="UserLink AuthorInfo-name">
                           <div class="Popover">
                             <div id="Popover81-toggle" aria-haspopup="true" aria-expanded="false" aria-owns="Popover81-content">
-                              <a class="UserLink-link" data-za-detail-view-element_name="User" target="_blank" href="//www.zhihu.com/people/zhao-feng-85-9">赵峰</a>
+                              <a class="UserLink-link" data-za-detail-view-element_name="User" target="_blank" href="//www.zhihu.com/people/zhao-feng-85-9">{{item.author.name}}</a>
                             </div>
                           </div>
                         </span>
@@ -71,7 +71,7 @@
                       <!-- 用户身份 -->
                       <div class="AuthorInfo-detail">
                         <div class="AuthorInfo-badge">
-                          <div class="ztext AuthorInfo-badgeText">大学生</div>
+                          <div class="ztext AuthorInfo-badgeText">{{item.author.job}}</div>
                         </div>
                       </div>
                     </div>
@@ -80,7 +80,7 @@
 
                 <div class="RichContent">
                   <div class="RichContent-inner">
-                    <span class="RichText ztext CopyrightRichText-richText" itemprop="text">测试回答内容</span>
+                    <span class="RichText ztext CopyrightRichText-richText" itemprop="text">{{item.content}}</span>
                     <el-button plain class="Button ContentItem-more Button--plain" style="font-size: 14px;">阅读全文
                       <span style="display: inline-flex; align-items: center;">
                         ​<svg-icon icon-class="arrow-down"></svg-icon>
@@ -126,8 +126,56 @@
   </div>
 </template>
 <script>
+import { listQuestion } from '@/api/question'
+import { listAnswerInProfile } from '@/api/answer'
+import { listArticle } from '@/api/class'
+
 export default {
-  
+  data () {
+    return {
+      pageInfo: {
+        total: 0,
+        totalPage: 0,
+        list: []
+      },
+      answerTotal: 0,
+      articleTotal: 0,
+      questionList: [],
+      answerList: [],
+      articleList: [],
+      queryParam: {
+        userId: 1,
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      }
+    }
+  },
+  created () {
+    this.handleListQuestion()
+    this.handleListAnswer()
+  },
+  methods: {
+    handleListQuestion () {
+      console.log('问题列表查询参数', this.queryParam)
+      listQuestion(this.queryParam).then(resp => {
+        console.log('获取的问题列表', resp.data)
+        this.pageInfo = resp.data
+      })
+    },
+    handleListAnswer () {
+      listAnswerInProfile(this.queryParam).then(resp => {
+        this.answerList = resp.data.list
+        this.answerTotal = resp.data.total
+      })
+    },
+    handleListArticle () {
+      listArticle(this.queryParam).then(resp => {
+        this.articleList = resp.data.list
+        this.articleTotal = resp.data.total
+      })
+    }
+  }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
