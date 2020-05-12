@@ -9,6 +9,12 @@
         <div class="Topstory-mainColumn">
           <div class="Topstory-mainColumnCard">
             <el-card>
+              <div slot="header" class="List-header">
+                <el-radio-group v-model="queryParam.sort" @change="handleAnswerSortChange">
+                  <el-radio :label="1">按热度排序</el-radio>
+                  <el-radio :label="2">按时间排序</el-radio>
+                </el-radio-group>
+              </div>
               <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
                 <h2 class="ContentItem-title">
                   <!-- 文章标题 -->
@@ -37,8 +43,7 @@
                 </div>
                 <div class="RichContent">
                   <div class="ContentItem-actions">
-                    <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
-                    <button type="button" class="Button ContentItem-action Button--plain" @click="handlevisible(item,$event)">
+                    <button style="margin-left: 5px" type="button" class="Button ContentItem-action Button--plain" @click="handlevisible(item,$event)">
                       <span style="display: inline-flex; align-items: center;">​
                         <svg-icon icon-class="comment"></svg-icon>
                       </span>
@@ -413,5 +418,17 @@
   }
   .comment {
     display: none;
+  }
+  .List-header {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: flex-end;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 50px;
+    margin: 0 20px;
+    // border-bottom: 1px solid #f6f6f6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
   }
 </style>

@@ -8,10 +8,7 @@
             <el-input v-model="form.title" :placeholder="titlePlaceholder"></el-input>
           </el-form-item>
           <el-form-item>
-            <div class="contentEditor">
-              <!-- <Editor v-model="form.content" :placeholder="contentPlaceholder"></Editor> -->
-              <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
-            </div>
+            <MarkdownEditor v-model="form.content" :placeholder="contentPlaceholder" v-bind:content.sync="form.content" v-bind:isFull.sync="isFullScreen" :class="{'notFull': !isFullScreen}"></MarkdownEditor>
           </el-form-item>
           <el-form-item>
             <div class="ClassPublish-footer">
@@ -31,6 +28,7 @@
   import IndexHeader from '@/components/IndexHeader'
   import Editor from '@/components/Editor'
   import MarkdownEditor from '@/components/MarkdownEditor'
+  import { savearticle } from "../api/class";
 
   export default {
     components: {
@@ -83,7 +81,7 @@
             console.log(this.form)
             addClass(this.form).then(response => {
               Message.success("发布成功")
-              this.$router.push({path: '/index2'})
+              this.$router.push({path: '/'})
             })
           }
         })
@@ -97,9 +95,9 @@
           if (valid) {
             console.log('校验成功')
             console.log(this.form)
-            addClass(this.form).then(response => {
+            savearticle(this.form).then(response => {
               Message.success("保存成功")
-              this.$router.push({path: '/index2'})
+              this.$router.push({path: '/'})
             })
           }
         })
