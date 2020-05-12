@@ -287,7 +287,7 @@ export default {
       if (this.historyList.length !== 0 && this.searchValue.length === 0) {
         this.isShowSearchHistory = true
       } else if (this.searchValue.length !== 0) {
-        this.getRecommendKeywordList()
+        // this.getRecommendKeywordList()
       }
     },
     handleInputChange () {
@@ -299,7 +299,7 @@ export default {
 
       this.isShowSearchHistory = false
 
-      this.getRecommendKeywordList()
+      // this.getRecommendKeywordList()
     },
     getRecommendKeywordList () {
       listRecommendKeyword(this.searchValue).then(resp => {

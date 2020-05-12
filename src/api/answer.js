@@ -8,6 +8,14 @@ export function listAnswer (query) {
   })
 }
 
+export function listAnswerInProfile (query) {
+  return request({
+    url: '/answer/profile/list',
+    method: 'get',
+    params: query
+  })
+}
+
 export function addAnswer (data) {
   return request({
     url: '/answer/add',

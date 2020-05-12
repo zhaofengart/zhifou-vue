@@ -130,6 +130,7 @@
                   </div>
 
                   <!-- 回答内容列表 -->
+                  <div v-infinite-scroll="loadMore" infinite-scroll-distance="200">
                   <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
                     <div class="ContentItem AnswerItem">
                       <!-- 回答者信息及回答时间 -->
@@ -170,7 +171,7 @@
                           class="ContentItem-actions"
                           :class="{ 'Sticky': currentIndex === index, 'RichContent-actions': currentIndex === index, 'is-fixed': currentIndex === index && isContentActionsFixed , 'is-bottom': currentIndex === index, 'specialContentItem-actions': currentIndex === index}"
                           style="height: 54px;">
-                          <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
+                          <button @click="handleComment(item.id)" type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                             <span style="display: inline-flex; align-items: center;">​
                               <svg-icon icon-class="comment"></svg-icon>
                             </span>
@@ -202,9 +203,10 @@
                       </div>
                     </div>
                   </div>
-                  <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="400" infinite-scroll-immediate-check="false">
-                      <!-- <div class="loading">加载中...</div> -->
                   </div>
+                  <!-- <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="400" infinite-scroll-immediate-check="false"> -->
+                      <!-- <div class="loading">加载中...</div> -->
+                  <!-- </div> -->
                 </el-card>
               </div>
             </div>
@@ -212,6 +214,35 @@
         </div>
       </div>
     </div>
+
+    <!-- 评论列表和发布对话框 -->
+    <el-dialog :visible.sync="commentDialogVisible" width="700px">
+      <span slot="title" class="Comment-title">
+        <span>{{commentList.length}}条评论</span>
+      </span>
+      <!-- 评论列表 -->
+      <el-scrollbar style="height: 450px;" :wrapStyle="[{'overflow-x':'hidden'}]">
+        <div v-for="item in commentList" :key="item.id" class="CommentList">
+          <div class="CommentItemV2-meta">
+            <div style="display: flex; align-items: center;">
+              <el-avatar shape="square" size="small" :src="item.author.avatar" class="CommentItemV2-avatar"></el-avatar>
+              <span>{{item.author.name}}</span>
+            </div>
+            <div class="CommentItemV2-time">
+              {{item.createTime}}
+            </div>
+          </div>
+          <div class="CommentItemV2-metaSibling">
+            <span class="CommentItemV2-content">{{item.content}}</span>
+          </div>
+        </div>
+      </el-scrollbar>
+      <!-- 发布评论表单 -->
+      <span slot="footer" class="comment-dialog-footer">
+        <el-input v-model="comment.content" autosize clearable size="medium" type="text" maxlength="100" style="width: 570px; margin-right: 10px;" placeholder="写下你的评论..."></el-input>
+        <el-button type="primary" size="medium" @click="submitComment" :disabled="comment.content.trim().length === 0">发布</el-button>
+      </span>
+    </el-dialog>
     
   </div>
 </template>
@@ -221,6 +252,7 @@ import Editor from '@/components/Editor'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import { getQuestion } from '@/api/question'
 import { listAnswer, addAnswer} from '@/api/answer'
+import { listAnswerComment, addAnswerComment } from '@/api/comment'
 
 export default {
   components: {
@@ -229,6 +261,7 @@ export default {
   },
   data () {
     return {
+      commentDialogVisible: false,
       busy: false,
       // 活动的列表项索引
       currentIndex: -1,
@@ -276,6 +309,16 @@ export default {
         questionId: undefined,
         // 回答列表排序方式
         sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      },
+      commentList: [],
+      comment: {
+        answerId: undefined,
+        content: ''
+      },
+      commentQueryParam: {
+        answerId: undefined,
         pageNum: 1,
         pageSize: 10
       }
@@ -341,6 +384,12 @@ export default {
         addAnswer(this.answerForm).then(response => {
           this.answerAdd = false
           this.getQuestionById()
+          this.$message({
+              message: '发布成功，增加 ' + response.data + ' 积分',
+              type: 'success',
+              duration: 0,
+              showClose: true,
+            })
         })
       }
     },
@@ -406,6 +455,23 @@ export default {
       //把busy置位true，这次请求结束前不再执行
       this.queryParam.pageNum++
       this.getAnswersByParam()
+    },
+    handleComment (answerId) {
+      this.commentQueryParam.answerId = answerId
+      this.comment.answerId = answerId
+      this.getCommentList()
+      this.commentDialogVisible = true
+    },
+    getCommentList() {
+      listAnswerComment(this.commentQueryParam).then(resp => {
+        this.commentList = resp.data
+      })
+    },
+    submitComment () {
+      addAnswerComment(this.comment).then(resp => {
+        this.$message.success('评论成功')
+        this.getCommentList()
+      })
     }
   }
 }
@@ -780,5 +846,49 @@ export default {
   position: fixed;
   z-index: 2000;
   bottom: 0px;
+}
+
+.comment-dialog-footer {
+  height: 35px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  // border-top: 1px solid #f0f2f7;
+}
+
+.Comment-title {
+  // border-bottom: 1px solid #f0f2f7;
+}
+.CommentItemV2-meta {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    height: 24px;
+    padding-right: 3px;
+    padding-left: 1px;
+    margin-bottom: 4px;
+    line-height: 24px;
+}
+.CommentItemV2-avatar {
+    margin-right: 8px;
+}
+.CommentItemV2-time {
+    float: right;
+    font-size: 14px;
+    color: #8590a6;
+}
+.CommentItemV2-metaSibling {
+    padding-left: 33px;
+}
+.CommentItemV2-content {
+    margin-bottom: 6px;
+    line-height: 25px;
+}
+.CommentList {
+  padding: 12px 20px 10px 0;
+  border-bottom: 1px solid #f0f2f7;
+}
+.CommentList:first-child {
+  padding:0 20px 10px 0;
 }
 </style>
