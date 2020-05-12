@@ -341,6 +341,12 @@ export default {
         addAnswer(this.answerForm).then(response => {
           this.answerAdd = false
           this.getQuestionById()
+          this.$message({
+              message: '发布成功，增加 ' + response.data + ' 积分',
+              type: 'success',
+              duration: 0,
+              showClose: true,
+            })
         })
       }
     },
