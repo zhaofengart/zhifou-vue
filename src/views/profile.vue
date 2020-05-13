@@ -32,8 +32,8 @@
     <div class="Profile-main">
       <el-card class="ProfileMain">
         <div class="ProfileMain-header">
-          <el-tabs>
-            <el-tab-pane label="我的提问" class="tab-pane">
+          <el-tabs v-model="activeTab" @tab-click="handleClickTab">
+            <el-tab-pane label="我的提问" name="question" class="tab-pane">
               <div class="List-item" v-for="item in pageInfo.list" :key="item.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
@@ -46,8 +46,20 @@
                   <span class="ContentItem-statusItem">{{item.followNum}} 个关注</span>
                 </div>
               </div>
+              <!-- 问题分页 -->
+                <div class="Pagination">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
+                    :total="pageInfo.total"
+                    @current-change="getQuestionList">
+                  </el-pagination>
+                </div>
             </el-tab-pane>
-            <el-tab-pane label="我的回答">
+
+            <el-tab-pane label="我的回答" name="answer" @click="handleListAnswer">
               <div class="List-item" v-for="item in answerList" :key="item.question.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
@@ -111,9 +123,20 @@
                   </div>
                 </div>
               </div>
+              <!-- 回答分页 -->
+                <div class="Pagination">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
+                    :total="answerTotal"
+                    @current-change="getAnswerList">
+                  </el-pagination>
+                </div>
             </el-tab-pane>
             <!-- 文章列表与回答类似 -->
-            <el-tab-pane label="我的文章"></el-tab-pane>
+            <el-tab-pane label="我的文章" name="article"></el-tab-pane>
             <el-tab-pane label="我关注的人"></el-tab-pane>
             <!-- 与提问类似 -->
             <el-tab-pane label="我关注的问题"></el-tab-pane>
@@ -133,6 +156,7 @@ import { listArticle } from '@/api/class'
 export default {
   data () {
     return {
+      activeTab: 'question',
       pageInfo: {
         total: 0,
         totalPage: 0,
@@ -152,24 +176,43 @@ export default {
     }
   },
   created () {
-    this.handleListQuestion()
-    this.handleListAnswer()
+    this.getQuestionList()
   },
   methods: {
-    handleListQuestion () {
+    handleClickTab (tab, event) {
+      console.log(tab, event);
+      this.resetQueryParam()
+      if (tab.name === 'question') {
+        this.getQuestionList()
+      } else if (tab.name === 'answer') {
+        this.getAnswerList()
+      } else if (tab.name === 'article') {
+        this.getArticleList()
+      }
+    },
+    resetQueryParam () {
+      this.queryParam = {
+        userId: 1,
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      }
+    },
+    getQuestionList () {
       console.log('问题列表查询参数', this.queryParam)
       listQuestion(this.queryParam).then(resp => {
         console.log('获取的问题列表', resp.data)
         this.pageInfo = resp.data
       })
     },
-    handleListAnswer () {
+    getAnswerList () {
+      console.log('回答列表查询参数', this.queryParam)
       listAnswerInProfile(this.queryParam).then(resp => {
         this.answerList = resp.data.list
         this.answerTotal = resp.data.total
       })
     },
-    handleListArticle () {
+    getArticleList () {
       listArticle(this.queryParam).then(resp => {
         this.articleList = resp.data.list
         this.articleTotal = resp.data.total
@@ -326,5 +369,9 @@ export default {
     padding: 0;
     margin-left: 4px;
     color: #175199;
+}
+.Pagination {
+  margin: 15px auto;
+  text-align: center;
 }
 </style>
