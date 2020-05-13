@@ -48,7 +48,7 @@
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
                           <!-- 文章标题 -->
-                          <router-link :to="{path: '/article', query: {articleId: item.id}}" target="_blank">
+                          <router-link :to="{path: '/classDetail', query: {articleId: item.id}}" target="_blank">
                             <span v-html="item.title"></span>
                           </router-link>
                         </h2>

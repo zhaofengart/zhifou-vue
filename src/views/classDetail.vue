@@ -9,6 +9,9 @@
               <el-card>
                 <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
                   <div class="ContentItem AnswerItem">
+                    <h3 class="ContentItem-title">
+                      <span v-html="item.title"></span>
+                    </h3>
                     <div class="ContentItem-meta">
                       <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
                         <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
@@ -68,6 +71,7 @@
   import Editor from '@/components/Editor'
   import MarkdownEditor from '@/components/MarkdownEditor'
   import {Message} from 'element-ui'
+  import {getClassDetail} from "../api/class";
 
   export default {
     components: {
@@ -78,8 +82,8 @@
       return {
         currentIndex: -1,
         isContentActionsFixed: true,
-        answerList: [
-          {
+        answerList: {
+            "title": '智能指针详解',
             "id": 123,
             "content": '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
               '\n' +
@@ -109,14 +113,23 @@
               "job":  "Java开发",
               "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
             }
-          }
-        ],
+      },
       }
     },
     created () {
+
     },
     mounted () {
-      window.addEventListener('scroll', this.handleScroll)
+      window.addEventListener('scroll', function(){
+        var scr = document.documentElement.scrollTop || document.body.scrollTop; // 向上滚动的那一部分高度
+        var clientHeight = document.documentElement.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
+        var scrHeight = document.documentElement.scrollHeight || document.body.scrollHeight; // 整个网页的实际高度，兼容Pc端
+        if(scr + clientHeight + 10000 >= scrHeight){
+              this.currentIndex = 1
+              this.isContentActionsFixed = false
+          }
+      });
+
     },
     methods: {
       handleScroll () {
@@ -124,6 +137,7 @@
           if (this.isBottomReachToBottomOfBrowser(item) || this.isTopReachToBottomOfBrowser(item)) {
             this.isContentActionsFixed = false
             this.currentIndex = 1
+            setTimeout(this.handleScroll, 100)
           } else {
             this.isContentActionsFixed = true
           }
@@ -148,6 +162,11 @@
           return false
         }
       },
+      getClassDetail(){
+        getClassDetail(this.$route.query.articleId).then(resp => {
+          this.answerList = resp.data
+        })
+      }
     }
   }
 </script>
@@ -521,5 +540,14 @@
     position: fixed;
     z-index: 2000;
     bottom: 0px;
+  }
+  .ContentItem-title {
+    font-size: 25px;
+    font-weight: 600;
+    font-synthesis: style;
+    line-height: 3;
+    color: #1a1a1a;
+    margin-top: -8px;
+    margin-bottom: -4px;
   }
 </style>

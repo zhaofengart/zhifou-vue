@@ -39,3 +39,11 @@ export function articlelist (query) {
     params: query
   })
 }
+
+export function getClassDetail (articleId) {
+  return request({
+    url: '/article',
+    method: 'get',
+    query: articleId
+  })
+}
