@@ -91,10 +91,10 @@
                 <el-pagination
                   background
                   layout="prev, pager, next"
-                  :current-page="queryParam.pageNum"
-                  :page-size="queryParam.pageSize"
+                  :current-page.sync="queryParam.pageNum"
+                  :page-size.sync="queryParam.pageSize"
                   :total="pageClassInfo.total"
-                  @current-change="handleChangePageNum">
+                  @current-change="handleGetArticleList">
                 </el-pagination>
               </div>
             </el-card>
