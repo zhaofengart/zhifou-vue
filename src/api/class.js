@@ -23,3 +23,11 @@ export function savearticle (data) {
     data: data
   })
 }
+
+export function articlelist (query) {
+  return request({
+    url: '/article/list',
+    method: 'get',
+    params: query
+  })
+}
