@@ -44,10 +44,10 @@
                   <el-pagination
                     background
                     layout="prev, pager, next"
-                    :current-page="queryParam.pageNum"
-                    :page-size="queryParam.pageSize"
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
                     :total="pageInfo.total"
-                    @current-change="handleChangePageNum">
+                    @current-change="getQuestionList">
                   </el-pagination>
                 </div>
               </el-card>
@@ -112,6 +112,9 @@ export default {
         this.queryParam.pageNum = 1
         this.isClicked = !this.isClicked
       }
+      this.getQuestionList()
+    },
+    getQuestionList () {
       console.log('问题列表查询参数', this.queryParam)
       listQuestion(this.queryParam).then(resp => {
         console.log('获取的问题列表', resp.data)
@@ -122,10 +125,6 @@ export default {
       localStorage.setItem('write', true)
       let routerJump = this.$router.resolve({path: '/question', query: {questionId: questionId}})
       window.open(routerJump.href, '_blank')
-    },
-    handleChangePageNum (currentPage) {
-      this.queryParam.pageNum = currentPage
-      this.handleListQuestion()
     }
   }
 }
