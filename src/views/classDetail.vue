@@ -7,30 +7,30 @@
           <div class="Question-mainColumn">
             <div class="QuestionAnswers-answers">
               <el-card>
-                <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
+                <div ref="answerItem" class="List-item">
                   <div class="ContentItem AnswerItem">
                     <h3 class="ContentItem-title">
-                      <span v-html="item.title"></span>
+                      <span v-html="article.title"></span>
                     </h3>
                     <div class="ContentItem-meta">
                       <div class="AuthorInfo AnswerItem-authorInfo AnswerItem-authorInfo--related">
-                        <el-avatar shape="circle" size="large" :src="item.author.avatar"></el-avatar>
+                        <el-avatar shape="circle" size="large" :src="article.author.avatar"></el-avatar>
                         <div class="AuthorInfo-content">
                           <div class="AuthorInfo-head">
-                            <span class="AuthorInfo-name">{{item.author.name}}</span>
+                            <span class="AuthorInfo-name">{{article.author.name}}</span>
                           </div>
                           <div class="AuthorInfo-job">
-                            <span>{{item.author.job}}</span>
+                            <span>{{article.author.job}}</span>
                           </div>
                         </div>
                         <div class="publishTime">
-                          <span>{{parseTime(item.createTime)}}</span>
+                          <span>{{parseTime(article.createTime)}}</span>
                         </div>
                       </div>
                     </div>
                     <div class="RichContent RichContent--unescapable">
                       <div class="RichContent-inner">
-                        <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="item.content"></span>
+                        <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="article.content"></span>
                       </div>
                       <div
                         class="ContentItem-actions"
@@ -82,7 +82,7 @@
       return {
         currentIndex: -1,
         isContentActionsFixed: true,
-        answerList: {
+        article: {
             "title": '智能指针详解',
             "id": 123,
             "content": '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
@@ -117,7 +117,7 @@
       }
     },
     created () {
-
+      this.getClassDetail()
     },
     mounted () {
       window.addEventListener('scroll', function(){
@@ -164,7 +164,8 @@
       },
       getClassDetail(){
         getClassDetail(this.$route.query.articleId).then(resp => {
-          this.answerList = resp.data
+          console.log(resp.data)
+          this.article = resp.data
         })
       }
     }
