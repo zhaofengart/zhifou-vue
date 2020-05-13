@@ -23,7 +23,7 @@
               <div slot="header" class="TopstoryTabsHeader">
                 <a href="/Manage" style="border-bottom: 1px solid #e6ebf5;border-radius: 0;height: 60px;vertical-align: middle;display: table-cell;padding: 20px">全部成员</a>
                 <el-button @click="handleManageBtn" type="primary" class="SearchBar-askButton" style="margin-left: 300px;margin-top: 12px">管理</el-button>
-                <el-select style="width: 80px;margin-left: 20px;margin-top: 10px" v-model="value" placeholder="部门">
+                <el-select style="width: 80px;margin-left: 20px;margin-top: 10px" v-model="value" placeholder="部门" @change="handleChangeDepartment">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -40,12 +40,12 @@
                   </el-option>
                 </el-select>
               </div>
-              <div v-for="item in memberlist" :key="item.id">
+              <div v-for="item in memberInfo.memberlist" :key="item.id" @change="handleChangeStation">
                 <div class="TopstoryItem TopstoryItem-isRecommend">
                   <div class="RichContent-inner">
                     <div style="display: flex">
                       <el-avatar shape="circle" size="large" :src="item.avatar"></el-avatar>
-                      <a style="margin-left: 10px;margin-top: 13px" target="_blank" href="/#/index2">{{item.name}}</a>
+                      <router-link style="margin-left: 10px;margin-top: 13px" :to="{path: '/profile', query: {memberId: item.id}}" target="_blank" >{{item.name}}</router-link>
                     </div>
                     <el-button @click="handleLogout(item.id)"  type="primary" plain>注销</el-button>
                   </div>
@@ -61,6 +61,7 @@
 <script>
   import IndexHeader from '@/components/IndexHeader'
   import { Message } from 'element-ui'
+  import {deletemember, memberlist, searchMember} from "../api/manage";
 
   export default {
     components: {
@@ -68,6 +69,11 @@
     },
     data () {
       return {
+        queryParam: {
+          sort: 1,
+          pageNum: 1,
+          pageSize: 10
+        },
         searchValue: "",
         options: [{
           value: '选项1',
@@ -103,35 +109,82 @@
           label: 'C#'
         }],
         value1: '',
-        memberlist: [{
-          id: 123,
-          name: "姓名一",
-          avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg"
-        },{
-          id: 456,
-          name: "姓名二",
-          avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg"
-        },{
-          id: 789,
-          name: "姓名三",
-          avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg"
-        }],
+        memberInfo: {
+          total: 60,
+          totalPage: 10,
+          memberlist: [{
+            id: 123,
+            name: "姓名一",
+            avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg",
+            department: "AMI",
+            station: "C++"
+          },{
+            id: 456,
+            name: "姓名二",
+            avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg",
+            department: "AMI",
+            station: "C++"
+          },{
+            id: 789,
+            name: "姓名三",
+            avatar: "https://pic4.zhimg.com/da8e974dc_is.jpg",
+            department: "AMI",
+            station: "C++"
+          }]
+        },
         activeName: 'second'
       }
     },
     computed: {
 
     },
+    created() {
+      this.handleGetMemberList()
+    },
     methods: {
+      handleGetMemberList () {
+        memberlist(this.queryParam).then(resp => {
+          this.memberInfo = resp.data
+        })
+      },
       handleLogout(id) {
-        Message.success('注销成功！')
+        deletemember(id).then(resp => {
+          Message.success("注销成功")
+          this.handleGetMemberList()
+        })
       },
       handleManageBtn() {
         let routedata = this.$router.resolve('/departmentManage')
         window.open(routedata.href,'_blank')
       },
       handleSearch() {
+        searchMember(this.searchValue).then(resp => {
+          this.memberInfo.memberlist = resp.data
+        })
+      },
+      handleChangeDepartment() {
+        for(i = 0;i < this.memberInfo.memberlist.length;i ++)
+        {
+          if(this.memberInfo.memberlist[i].department === this.value)
+          {
 
+          }
+          else{
+            this.memberInfo.memberlist.remove(i)
+          }
+        }
+      },
+      handleChangeStation() {
+        for(i = 0;i < this.memberInfo.memberlist.length;i ++)
+        {
+          if(this.memberInfo.memberlist[i].station === this.value1)
+          {
+
+          }
+          else{
+            this.memberInfo.memberlist.remove(i)
+          }
+        }
       }
     }
   }

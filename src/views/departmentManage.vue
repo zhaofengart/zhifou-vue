@@ -14,7 +14,7 @@
           <div class="Topstory-mainColumnCard">
             <el-card>
               <div slot="header" class="TopstoryTabsHeader" style="height: 55px">
-                <el-button type="primary" class="SearchBar-askButton" style="margin-top: 11px;width: 80px">新增部门</el-button>
+                <el-button type="primary" class="SearchBar-askButton" style="margin-top: 11px;width: 80px" @click="handleAddDepartment">新增部门</el-button>
                 <div class="SearchBar">
                   <div class="SearchAndHistory">
                     <label class="SearchBar-input">
@@ -25,13 +25,13 @@
                   </div>
                 </div>
               </div>
-              <div v-for="item in memberlist" :key="item.id">
+              <div v-for="item in departmentInfo.departmentlist">
                 <div class="TopstoryItem TopstoryItem-isRecommend">
                   <div class="RichContent-inner">
-                    <a style="margin-top: 13px;margin-left: 10px" target="_blank" href="/#/index2">{{item.name}}</a>
+                    <router-link style="margin-top: 13px;margin-left: 10px" target="_blank" :to="{path: 'stationManage',query: {departmentName:item.name}}">{{item.name}}</router-link>
                     <el-row>
-                      <el-button title="编辑" @click="edit" style="margin-left: 300px;" type="primary" icon="el-icon-edit" circle></el-button>
-                      <el-button title="删除" @click="handledelete" type="danger" icon="el-icon-delete" circle></el-button>
+                      <el-button title="编辑" @click="edit(item.name)" style="margin-left: 300px;" type="primary" icon="el-icon-edit" circle></el-button>
+                      <el-button title="删除" @click="handledelete(item.name)" type="danger" icon="el-icon-delete" circle></el-button>
                     </el-row>
                   </div>
                 </div>
@@ -46,6 +46,7 @@
 <script>
   import IndexHeader from '@/components/IndexHeader'
   import { Message } from 'element-ui'
+  import {addDepartment, deleteDepartment, editdepartment, getDepartmentList} from "../api/manage";
 
   export default {
     components: {
@@ -87,33 +88,49 @@
           label: 'C#'
         }],
         value1: '',
-        memberlist: [{
-          name: "AMI分布式系统基础平台",
-        },{
-          name: "ATP华锐核心交易平台",
-        },{
-          name: "ARC华锐实时风控平台",
-        },{
-          name: "AMD华锐高速行情平台",
-        },{
-          name: "ATH华锐高速交易总线",
-        }],
+        departmentInfo: {
+          departmentlist: [{
+            name: "AMI分布式系统基础平台",
+          },{
+            name: "ATP华锐核心交易平台",
+          },{
+            name: "ARC华锐实时风控平台",
+          },{
+            name: "AMD华锐高速行情平台",
+          },{
+            name: "ATH华锐高速交易总线",
+          }]
+        },
+
+
+
         activeName: 'second'
       }
     },
     computed: {
 
     },
+    created() {
+      this.getDepartmentList()
+    },
     methods: {
-      edit() {
+      getDepartmentList() {
+        getDepartmentList().then(resp => {
+          this.departmentInfo = resp.data
+        })
+      },
+      edit(name) {
         this.$prompt('修改部门名称', '编辑', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
-            this.$message({
-              type: 'success',
-              message: '修改成功！'
-            });
+            editdepartment(name,value).then(() => {
+              this.getDepartmentList()
+              this.$message({
+                type: 'success',
+                message: '编辑成功!'
+              });
+            })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -121,20 +138,42 @@
           });
         });
       },
-      handledelete() {
+      handledelete(name) {
         this.$confirm('确认删除?', '确认', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+            deleteDepartment(name).then(() => {
+            this.getDepartmentList()
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
+          });
+        });
+      },
+      handleAddDepartment() {
+        this.$prompt('新增部门', '输入名称', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          addDepartment(value).then(() => {
+            this.getDepartmentList()
+            this.$message({
+              type: 'success',
+              message: '新增成功!'
+            });
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
           });
         });
       }

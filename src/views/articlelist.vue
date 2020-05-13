@@ -119,7 +119,7 @@
 <script>
   import QuickEntry from '@/components/QuickEntry'
   import Leaderboard from '@/components/Leaderboard'
-  import { searchArticle } from '@/api/class'
+  import { articlelist } from '@/api/class'
   import classDetail from "./classDetail";
 
   export default {
@@ -234,20 +234,17 @@
 
     },
     created () {
-      this.queryParam.searchTitle = this.$route.query.value
-      this.handleSearch()
+      this.handleGetArticleList()
     },
     methods: {
-      handleSearch () {
-        console.log('查询参数', this.queryParam)
-        searchArticle(this.queryParam).then(resp => {
-          console.log('获取的文章列表', resp.data)
+      handleGetArticleList () {
+        articlelist(this.queryParam).then(resp => {
           this.pageClassInfo = resp.data
         })
       },
       handleChangePageNum (currentPage) {
         this.queryParam.pageNum = currentPage
-        this.handleSearch()
+        this.handleGetArticleList()
       },
       togglePickUp(item, e) {
         let target = e.target.parentNode;//点击后获取当前评论
