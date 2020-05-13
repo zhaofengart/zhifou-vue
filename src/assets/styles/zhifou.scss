@@ -1,6 +1,12 @@
 .el-tabs__item {
   font-size: 16px;
 }
+.el-dialog__body {
+  padding: 10px 0;
+  color: #606266;
+  font-size: 14px;
+  word-break: break-all;
+}
 .Button {
   display: inline-block;
   padding: 0 16px;

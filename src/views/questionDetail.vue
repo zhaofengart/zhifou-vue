@@ -130,7 +130,7 @@
                   </div>
 
                   <!-- 回答内容列表 -->
-                  <div v-infinite-scroll="loadMore" infinite-scroll-distance="200">
+                  <div v-infinite-scroll="loadMore" >
                   <div ref="answerItem" class="List-item" v-for="(item, index) in answerList" :key="item.id" >
                     <div class="ContentItem AnswerItem">
                       <!-- 回答者信息及回答时间 -->
@@ -216,13 +216,13 @@
     </div>
 
     <!-- 评论列表和发布对话框 -->
-    <el-dialog :visible.sync="commentDialogVisible" width="700px">
+    <el-dialog :visible.sync="commentDialogVisible" width="700px" v-show="commentDialogVisible">
       <span slot="title" class="Comment-title">
-        <span>{{commentList.length}}条评论</span>
+        <span>{{commentPageInfo.total}}条评论</span>
       </span>
       <!-- 评论列表 -->
-      <el-scrollbar style="height: 450px;" :wrapStyle="[{'overflow-x':'hidden'}]">
-        <div v-for="item in commentList" :key="item.id" class="CommentList">
+      <ul v-infinite-scroll="loadMoreComment" style="height: 450px; overflow:auto; padding-left: 0; margin: 0;">
+        <li v-for="item in commentPageInfo.list" :key="item.id" class="CommentList">
           <div class="CommentItemV2-meta">
             <div style="display: flex; align-items: center;">
               <el-avatar shape="square" size="small" :src="item.author.avatar" class="CommentItemV2-avatar"></el-avatar>
@@ -231,12 +231,12 @@
             <div class="CommentItemV2-time">
               {{item.createTime}}
             </div>
-          </div>
+          </div> 
           <div class="CommentItemV2-metaSibling">
             <span class="CommentItemV2-content">{{item.content}}</span>
           </div>
-        </div>
-      </el-scrollbar>
+        </li>
+      </ul>
       <!-- 发布评论表单 -->
       <span slot="footer" class="comment-dialog-footer">
         <el-input v-model="comment.content" autosize clearable size="medium" type="text" maxlength="100" style="width: 570px; margin-right: 10px;" placeholder="写下你的评论..."></el-input>
@@ -312,7 +312,11 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      commentList: [],
+      commentPageInfo: {
+        total: 0,
+        totalPage: 0,
+        list: []
+      },
       comment: {
         answerId: undefined,
         content: ''
@@ -448,6 +452,7 @@ export default {
     },
     // 无限滚动
     loadMore () {
+      console.log(this.queryParam)
       if (this.queryParam.pageNum >= this.pageInfo.totalPage || this.queryParam.questionId === undefined) {
         return
       }
@@ -457,6 +462,9 @@ export default {
       this.getAnswersByParam()
     },
     handleComment (answerId) {
+      if (this.commentQueryParam.answerId !== answerId) {
+        this.pageInfo.list = []
+      }
       this.commentQueryParam.answerId = answerId
       this.comment.answerId = answerId
       this.getCommentList()
@@ -464,7 +472,8 @@ export default {
     },
     getCommentList() {
       listAnswerComment(this.commentQueryParam).then(resp => {
-        this.commentList = resp.data
+        console.log('评论列表', resp.data)
+        this.commentPageInfo = resp.data
       })
     },
     submitComment () {
@@ -472,6 +481,12 @@ export default {
         this.$message.success('评论成功')
         this.getCommentList()
       })
+    },
+    loadMoreComment () {
+      this.$message.success('新获取的评论')
+      this.commentQueryParam.pageNum++
+      this.getCommentList()
+      console.log('dddd')
     }
   }
 }
@@ -866,6 +881,7 @@ export default {
     height: 24px;
     padding-right: 3px;
     padding-left: 1px;
+    margin-top: 2px;
     margin-bottom: 4px;
     line-height: 24px;
 }
@@ -885,10 +901,11 @@ export default {
     line-height: 25px;
 }
 .CommentList {
-  padding: 12px 20px 10px 0;
+  margin: 0 20px;
+  padding: 12px 0 10px 0;
   border-bottom: 1px solid #f0f2f7;
 }
 .CommentList:first-child {
-  padding:0 20px 10px 0;
+  padding:0 0 10px 0;
 }
 </style>
