@@ -90,15 +90,15 @@
                   </div>
                 </div>
 
-                <div class="RichContent">
+                <div class="RichContent RichContent--unescapable" :class="{ 'is-collapsed': true}">
                   <div class="RichContent-inner">
-                    <span class="RichText ztext CopyrightRichText-richText" itemprop="text">{{item.content}}</span>
-                    <el-button plain class="Button ContentItem-more Button--plain" style="font-size: 14px;">阅读全文
+                    <span class="RichText ztext CopyrightRichText-richText" style="max-height: 51px;" v-html="item.content"></span>
+                  </div>
+                  <el-button plain class="Button  ContentItem-rightButton ContentItem-expandButton Button--plain" style="font-size: 14px;">阅读全文
                       <span style="display: inline-flex; align-items: center;">
                         ​<svg-icon icon-class="arrow-down"></svg-icon>
                       </span>
                     </el-button>
-                  </div>
                   <div class="ContentItem-actions">
                     <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                       <span style="display: inline-flex; align-items: center;">​
@@ -373,5 +373,40 @@ export default {
 .Pagination {
   margin: 15px auto;
   text-align: center;
+}
+
+.RichContent {
+    line-height: 1.67;
+}
+.RichContent--unescapable.is-collapsed {
+    position: relative;
+    overflow: hidden;
+}
+.RichContent-inner {
+    height: auto;
+    margin-top: 9px;
+    margin-bottom: -4px;
+    overflow: hidden;
+}
+.RichContent.is-collapsed .RichContent-inner {
+    max-height: 51px;
+}
+.RichContent--unescapable.is-collapsed .ContentItem-rightButton {
+    // position: absolute;
+    z-index: 1;
+    // bottom: 30px;
+    left: 0;
+    width: 100%;
+    color: #175199;
+    font-size: 15px;
+}
+
+.QuestionRichText {
+    font-size: 15px;
+    line-height: 25px;
+}
+.ztext {
+    word-break: break-word;
+    line-height: 1.6;
 }
 </style>
