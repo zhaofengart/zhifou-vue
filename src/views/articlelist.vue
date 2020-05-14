@@ -10,12 +10,12 @@
           <div class="Topstory-mainColumnCard">
             <el-card>
               <div slot="header" class="List-header">
-                <el-radio-group v-model="queryParam.sort" @change="handleAnswerSortChange">
+                <el-radio-group v-model="queryParam.sort" @change="handleArticleSortChange">
                   <el-radio :label="1">按热度排序</el-radio>
                   <el-radio :label="2">按时间排序</el-radio>
                 </el-radio-group>
               </div>
-              <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
+              <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo1" :key="index">
                 <h2 class="ContentItem-title">
                   <!-- 文章标题 -->
                   <router-link :to="{path: '/classDetail', query: {articleId: item.id}}" target="_blank">
@@ -121,6 +121,7 @@
   import Leaderboard from '@/components/Leaderboard'
   import { articlelist } from '@/api/class'
   import classDetail from "./classDetail";
+  import {Message} from 'element-ui'
 
   export default {
     components: {
@@ -191,7 +192,9 @@
       }
     },
     computed: {
-
+      pageClassInfo1: function () {
+          return this.sortKey(this.pageClassInfo.list,'createTime')
+      }
     },
     created () {
       this.handleGetArticleList()
@@ -233,6 +236,17 @@
         {
           document.getElementById(item.id).style.display = "block"
         }
+      },
+      handleArticleSortChange() {
+        this.handleGetArticleList()
+        //this.pageClassInfo.list = this.sortKey(this.pageClassInfo.list,'createTime')
+      },
+      sortKey(array,key){
+        return array.sort(function (a,b) {
+            var x = a[key]
+            var y = b[key]
+            return ((y < x)?-1:(x > y)?1:0)
+        })
       }
     },
     filters: {

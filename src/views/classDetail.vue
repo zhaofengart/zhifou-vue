@@ -33,6 +33,7 @@
                         <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="article.content"></span>
                       </div>
                       <div
+                        v-if="isContentActionsFixed"
                         class="ContentItem-actions"
                         :class="{ 'Sticky': currentIndex === -1, 'RichContent-actions': currentIndex === -1, 'is-fixed': currentIndex === -1 && isContentActionsFixed , 'is-bottom': currentIndex === -1, 'specialContentItem-actions': currentIndex === -1}"
                         style="height: 54px;">
@@ -120,15 +121,20 @@
       this.getClassDetail()
     },
     mounted () {
+      window.addEventListener('scroll',handleScroll)
       window.addEventListener('scroll', function(){
-        var scr = document.documentElement.scrollTop || document.body.scrollTop; // 向上滚动的那一部分高度
-        var clientHeight = document.documentElement.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
-        var scrHeight = document.documentElement.scrollHeight || document.body.scrollHeight; // 整个网页的实际高度，兼容Pc端
-        if(scr + clientHeight + 10000 >= scrHeight){
-              this.currentIndex = 1
-              this.isContentActionsFixed = false
-          }
-      });
+        var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+        var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+
+        if(scrollTop+windowHeight===scrollHeight){
+          //写后台加载数据的函数
+          Message.success("已经到底部")
+          //this.isContentActionsFixed = false
+          //Message.success(this.isContentActionsFixed)
+          //setTimeout(this.handleScroll, 100)
+        }
+      })
 
     },
     methods: {
@@ -136,7 +142,7 @@
           var item = this.$refs.answerItem
           if (this.isBottomReachToBottomOfBrowser(item) || this.isTopReachToBottomOfBrowser(item)) {
             this.isContentActionsFixed = false
-            this.currentIndex = 1
+            //this.currentIndex = 1
             setTimeout(this.handleScroll, 100)
           } else {
             this.isContentActionsFixed = true
