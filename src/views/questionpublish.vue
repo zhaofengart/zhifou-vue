@@ -56,6 +56,7 @@ export default {
   },
   data () {
     return {
+      dialogVisible: false,
       // 是否全屏，如果是，则编辑框不需要设置高度，如果不是，则需要设置高度
       isFullScreen: false,
       showRecommendQuestion: false,
@@ -126,8 +127,15 @@ export default {
         if (valid) {
           console.log('校验成功', this.form)
           addQuestion(this.form).then(response => {
-            Message.success("发布成功")
-            this.$router.push({path: '/'})
+            this.$message({
+              message: '发布成功，增加 ' + response.data + ' 积分',
+              type: 'success',
+              duration: 0,
+              showClose: true,
+              onClose: () => {
+                this.$router.push({path: '/'})
+              }
+            })
           })
         }
       })

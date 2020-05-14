@@ -90,6 +90,30 @@ export default new Router({
       component: () => import('@/views/classDetail'),
       hidden: true,
       meta: {title: '知否问答'}
+    },
+    {
+      path: '/articlelist',
+      component: () => import('@/views/articlelist'),
+      hidden: true,
+      meta: {title: '知否问答'}
+    },
+    {
+      path: '/Manage',
+      component: () => import('@/views/Manage'),
+      hidden: true,
+      meta: {title: '知否问答'}
+    },
+    {
+      path: '/departmentManage',
+      component: () => import('@/views/departmentManage'),
+      hidden: true,
+      meta: {title: '知否问答'}
+    },
+    {
+      path: '/stationManage',
+      component: () => import('@/views/stationManage'),
+      hidden: true,
+      meta: {title: '知否问答'}
     }
   ]
 })

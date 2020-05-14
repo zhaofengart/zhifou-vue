@@ -4,17 +4,33 @@
       <div slot="header" class="Leaderboard-header">
         <span>本月排行榜</span>
       </div>
-      <div class="LeaderboardItem" v-for="i in (1,5)" :key="i">
-        <div class="Ranking-item HotItem-rank HotItem-hot">{{i}}</div>
-        <div class="Ranking-item">用户名{{i}}</div>
-        <div class="Ranking-item">{{10 * (10 - i)}}<i class="el-icon-coin" style="margin-left: 5px; font-size: 24px;"></i></div>
+      <div class="LeaderboardItem" v-for="(item, index) in scoreList" :key="item.id">
+        <div class="Ranking-item HotItem-rank" :class="{'HotItem-hot': index < 3}">{{index + 1}}</div>
+        <div class="Ranking-item">{{item.name}}</div>
+        <div class="Ranking-item">{{item.score}}<i class="el-icon-coin" style="margin-left: 5px; font-size: 24px;"></i></div>
       </div>
     </el-card>
   </div>
 </template>
 <script>
+import { listScore } from '@/api/user'
+
 export default {
-  
+  data () {
+    return {
+      scoreList: []
+    }
+  },
+  created () {
+    this.getScoreList()
+  },
+  methods: {
+    getScoreList () {
+      listScore().then(resp => {
+        this.scoreList = resp.data
+      })
+    }
+  }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">

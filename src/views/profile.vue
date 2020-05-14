@@ -32,26 +32,38 @@
     <div class="Profile-main">
       <el-card class="ProfileMain">
         <div class="ProfileMain-header">
-          <el-tabs>
-            <el-tab-pane label="我的提问" class="tab-pane">
-              <div class="List-item" v-for="i in (1,6)" :key="i">
+          <el-tabs v-model="activeTab" @tab-click="handleClickTab">
+            <el-tab-pane label="我的提问" name="question" class="tab-pane">
+              <div class="List-item" v-for="item in pageInfo.list" :key="item.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
-                    <a href="">如何看待抖音直播</a>
+                    <a href="">{{item.title}}</a>
                   </div>
                 </h2>
                 <div class="ContentItem-status">
                   <span class="ContentItem-statusItem">2020-03-31</span>
-                  <span class="ContentItem-statusItem">0 个回答</span>
-                  <span class="ContentItem-statusItem">1 个关注</span>
+                  <span class="ContentItem-statusItem">{{item.answeredNum}} 个回答</span>
+                  <span class="ContentItem-statusItem">{{item.followNum}} 个关注</span>
                 </div>
               </div>
+              <!-- 问题分页 -->
+                <div class="Pagination">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
+                    :total="pageInfo.total"
+                    @current-change="getQuestionList">
+                  </el-pagination>
+                </div>
             </el-tab-pane>
-            <el-tab-pane label="我的回答">
-              <div class="List-item" v-for="i in (1,6)" :key="i">
+
+            <el-tab-pane label="我的回答" name="answer" @click="handleListAnswer">
+              <div class="List-item" v-for="item in answerList" :key="item.question.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
-                    <a href="">如何看待抖音直播</a>
+                    <a href="">{{item.question.title}}</a>
                   </div>
                 </h2>
                 <div class="ContentItem-meta">
@@ -63,7 +75,7 @@
                         <span class="UserLink AuthorInfo-name">
                           <div class="Popover">
                             <div id="Popover81-toggle" aria-haspopup="true" aria-expanded="false" aria-owns="Popover81-content">
-                              <a class="UserLink-link" data-za-detail-view-element_name="User" target="_blank" href="//www.zhihu.com/people/zhao-feng-85-9">赵峰</a>
+                              <a class="UserLink-link" data-za-detail-view-element_name="User" target="_blank" href="//www.zhihu.com/people/zhao-feng-85-9">{{item.author.name}}</a>
                             </div>
                           </div>
                         </span>
@@ -71,22 +83,22 @@
                       <!-- 用户身份 -->
                       <div class="AuthorInfo-detail">
                         <div class="AuthorInfo-badge">
-                          <div class="ztext AuthorInfo-badgeText">大学生</div>
+                          <div class="ztext AuthorInfo-badgeText">{{item.author.job}}</div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="RichContent">
+                <div class="RichContent RichContent--unescapable" :class="{ 'is-collapsed': true}">
                   <div class="RichContent-inner">
-                    <span class="RichText ztext CopyrightRichText-richText" itemprop="text">测试回答内容</span>
-                    <el-button plain class="Button ContentItem-more Button--plain" style="font-size: 14px;">阅读全文
+                    <span class="RichText ztext CopyrightRichText-richText" style="max-height: 51px;" v-html="item.content"></span>
+                  </div>
+                  <el-button plain class="Button  ContentItem-rightButton ContentItem-expandButton Button--plain" style="font-size: 14px;">阅读全文
                       <span style="display: inline-flex; align-items: center;">
                         ​<svg-icon icon-class="arrow-down"></svg-icon>
                       </span>
                     </el-button>
-                  </div>
                   <div class="ContentItem-actions">
                     <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                       <span style="display: inline-flex; align-items: center;">​
@@ -111,9 +123,20 @@
                   </div>
                 </div>
               </div>
+              <!-- 回答分页 -->
+                <div class="Pagination">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
+                    :total="answerTotal"
+                    @current-change="getAnswerList">
+                  </el-pagination>
+                </div>
             </el-tab-pane>
             <!-- 文章列表与回答类似 -->
-            <el-tab-pane label="我的文章"></el-tab-pane>
+            <el-tab-pane label="我的文章" name="article"></el-tab-pane>
             <el-tab-pane label="我关注的人"></el-tab-pane>
             <!-- 与提问类似 -->
             <el-tab-pane label="我关注的问题"></el-tab-pane>
@@ -126,8 +149,76 @@
   </div>
 </template>
 <script>
+import { listQuestion } from '@/api/question'
+import { listAnswerInProfile } from '@/api/answer'
+import { listArticle } from '@/api/class'
+
 export default {
-  
+  data () {
+    return {
+      activeTab: 'question',
+      pageInfo: {
+        total: 0,
+        totalPage: 0,
+        list: []
+      },
+      answerTotal: 0,
+      articleTotal: 0,
+      questionList: [],
+      answerList: [],
+      articleList: [],
+      queryParam: {
+        userId: 1,
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      }
+    }
+  },
+  created () {
+    this.getQuestionList()
+  },
+  methods: {
+    handleClickTab (tab, event) {
+      console.log(tab, event);
+      this.resetQueryParam()
+      if (tab.name === 'question') {
+        this.getQuestionList()
+      } else if (tab.name === 'answer') {
+        this.getAnswerList()
+      } else if (tab.name === 'article') {
+        this.getArticleList()
+      }
+    },
+    resetQueryParam () {
+      this.queryParam = {
+        userId: 1,
+        sort: 1,
+        pageNum: 1,
+        pageSize: 10
+      }
+    },
+    getQuestionList () {
+      console.log('问题列表查询参数', this.queryParam)
+      listQuestion(this.queryParam).then(resp => {
+        console.log('获取的问题列表', resp.data)
+        this.pageInfo = resp.data
+      })
+    },
+    getAnswerList () {
+      console.log('回答列表查询参数', this.queryParam)
+      listAnswerInProfile(this.queryParam).then(resp => {
+        this.answerList = resp.data.list
+        this.answerTotal = resp.data.total
+      })
+    },
+    getArticleList () {
+      listArticle(this.queryParam).then(resp => {
+        this.articleList = resp.data.list
+        this.articleTotal = resp.data.total
+      })
+    }
+  }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -278,5 +369,44 @@ export default {
     padding: 0;
     margin-left: 4px;
     color: #175199;
+}
+.Pagination {
+  margin: 15px auto;
+  text-align: center;
+}
+
+.RichContent {
+    line-height: 1.67;
+}
+.RichContent--unescapable.is-collapsed {
+    position: relative;
+    overflow: hidden;
+}
+.RichContent-inner {
+    height: auto;
+    margin-top: 9px;
+    margin-bottom: -4px;
+    overflow: hidden;
+}
+.RichContent.is-collapsed .RichContent-inner {
+    max-height: 51px;
+}
+.RichContent--unescapable.is-collapsed .ContentItem-rightButton {
+    // position: absolute;
+    z-index: 1;
+    // bottom: 30px;
+    left: 0;
+    width: 100%;
+    color: #175199;
+    font-size: 15px;
+}
+
+.QuestionRichText {
+    font-size: 15px;
+    line-height: 25px;
+}
+.ztext {
+    word-break: break-word;
+    line-height: 1.6;
 }
 </style>

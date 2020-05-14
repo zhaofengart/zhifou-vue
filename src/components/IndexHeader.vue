@@ -10,7 +10,7 @@
             <a ref="indexLink" class="Tabs-link AppHeader-TabsLink" href="/">首页</a>
           </li>
           <li class="Tabs-item AppHeader-Tab">
-            <a ref="articleLink" class="Tabs-link AppHeader-TabsLink" >文章</a>
+            <a ref="articleLink" class="Tabs-link AppHeader-TabsLink" href="/articlelist">文章</a>
           </li>
         </ul>
 
@@ -20,7 +20,7 @@
             <label class="SearchBar-input">
               <el-input v-model="searchValue" clearable size="medium" type="text" maxlength="100" auto-complete="off" placeholder="请输入搜索内容"
                 @focus="handleInputFocus"
-                @input="handleInputChange"                
+                @input="handleInputChange"
                 @keyup.enter.native="handleSearchByValue(searchValue)">
               <el-button slot="append" icon="el-icon-search" class="SearchBar-searchButton" @click="handleSearch"></el-button>
               </el-input>
@@ -103,7 +103,7 @@
                 <router-link to="/profile">
                   <el-dropdown-item>我的主页</el-dropdown-item>
                 </router-link>
-                
+
                 <el-dropdown-item>设置</el-dropdown-item>
                 <el-dropdown-item @click.native="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
@@ -175,16 +175,16 @@ export default {
       console.log('router change', 'value', this.$route.query.value, 'searchValue',this.searchValue)
       if (this.$route.path === '/search' && this.$route.query.value === this.searchValue) {
         location.reload()
-      } 
+      }
     }
   },
   mounted () {
     if (this.$route.path === '/') {
       this.$refs.indexLink.className += ' is-active'
-    } 
-    // else if (this.$route.path === '/questionpublish'){
-    //   this.$refs.articleLink.className +=  ' is-active'
-    // }
+    }
+    else if (this.$route.path === '/articlelist'){
+      this.$refs.articleLink.className +=  ' is-active'
+    }
     console.log('mounted')
   },
   created () {
@@ -203,12 +203,12 @@ export default {
 
       if (this.searchValue !== '') {
         // 保存为历史记录
-        this.$store.dispatch("addHistory", this.searchValue)   
-        // 打印历史记录  
+        this.$store.dispatch("addHistory", this.searchValue)
+        // 打印历史记录
         console.log('历史记录', this.historyList)
 
         console.log('当前路由path', this.$route.path, '', 'value', this.$route.query.value, 'searchValue',this.searchValue)
-        
+
         // 跳转搜索结果页面
         if (this.$route.path === '/search' && this.$route.query.value === this.searchValue) {
           location.reload()
@@ -253,7 +253,7 @@ export default {
       var messageContent = '请输入搜索内容'
       if (length >= 50) {
         messageContent = '输入内容不超过50个字'
-      } 
+      }
       this.$message({
         showClose: true,
         message: messageContent,
@@ -287,7 +287,7 @@ export default {
       if (this.historyList.length !== 0 && this.searchValue.length === 0) {
         this.isShowSearchHistory = true
       } else if (this.searchValue.length !== 0) {
-        this.getRecommendKeywordList()
+        // this.getRecommendKeywordList()
       }
     },
     handleInputChange () {
@@ -295,16 +295,16 @@ export default {
         this.isShowSearchHistory = true
         this.isShowRecommendKeyword = false
         return
-      } 
-      
+      }
+
       this.isShowSearchHistory = false
 
-      this.getRecommendKeywordList()
+      // this.getRecommendKeywordList()
     },
     getRecommendKeywordList () {
       listRecommendKeyword(this.searchValue).then(resp => {
         this.recommendKeywordList = resp.data
-        if(this.recommendKeywordList.length !== 0) {          
+        if(this.recommendKeywordList.length !== 0) {
           this.isShowRecommendKeyword = true
         }
       })

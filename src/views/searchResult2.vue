@@ -44,11 +44,11 @@
 
                 <div class="Topstory-recommend" v-if="isArticleActive == true">
                   <div class="">
-                    <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
+                    <div ref="answerItem" class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
                       <div class="ContentItem AnswerItem">
                         <h2 class="ContentItem-title">
                           <!-- 文章标题 -->
-                          <router-link :to="{path: '/question', query: {questionId: item.id}}" target="_blank">
+                          <router-link :to="{path: '/classDetail', query: {articleId: item.id}}" target="_blank">
                             <span v-html="item.title"></span>
                           </router-link>
                         </h2>
@@ -68,21 +68,32 @@
                             </div>
                           </div>
                         </div>
-                        <div class="RichContent-inner">
-                          {{item | explainLen}}
-                          <a class="RichText ztext CopyrightRichText-richText"  v-show="item.content.length >= 75"
-                             style="color: #1890ff;"
-                             @click.stop="togglePickUp(item,$event)">{{item.isExpand?'　收起':'...全文'}}
-                          </a>
+                        <div class="RichContent RichContent--unescapable" :class="{ 'is-collapsed': currentIndex !== index}">
+                          <div class="RichContent-inner">
+                            <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="item.content"></span>
+                          </div>
                         </div>
+                        <button
+                          v-if="currentIndex !== index"
+                          type="button"
+                          style="margin-left: 300px;color: #1890ff;margin-top: 10px"
+                          class="Button ContentItem-rightButton ContentItem-expandButton Button--plain"
+                          @click="handleExpandContent(index)">
+                          展开阅读全文
+                          <span style="display: inline-flex; align-items: center;">​
+                            <svg-icon icon-class="arrow-down"></svg-icon>
+                          </span>
+                        </button>
                         <div class="RichContent">
-                          <div class="ContentItem-actions">
-                            <el-button plain style="width: 100px;" class="Button--blue ListQuestionItem-writeAnswerButton" icon="el-icon-plus">关注文章</el-button>
-                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel" @click="handlevisible(item,$event)">
+                          <div
+                            class="ContentItem-actions"
+                            :class="{ 'Sticky': currentIndex === index, 'RichContent-actions': currentIndex === index, 'is-fixed': currentIndex === index && isContentActionsFixed , 'is-bottom': currentIndex === index, 'specialContentItem-actions': currentIndex === index}"
+                            style="height: 54px;">
+                            <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                             <span style="display: inline-flex; align-items: center;">​
                               <svg-icon icon-class="comment"></svg-icon>
                             </span>
-                              200条评论
+                              评论
                             </button>
                             <button type="button" class="Button ContentItem-action Button--plain Button--withIcon Button--withLabel">
                             <span style="display: inline-flex; align-items: center;">
@@ -95,6 +106,16 @@
                               ​<svg-icon icon-class="like"></svg-icon>
                             </span>
                               喜欢
+                            </button>
+                            <button
+                              v-if="currentIndex === index"
+                              type="button"
+                              class="Button ContentItem-action ContentItem-rightButton Button--plain"
+                              @click="currentIndex = -1">
+                              <span class="RichContent-collapsedText">收起</span>
+                              <span style="display: inline-flex; align-items: center;">​
+                              <svg-icon icon-class="arrow-up" class="ContentItem-arrowIcon" :class="{'is-active': currentIndex === index}"></svg-icon>
+                            </span>
                             </button>
                           </div>
                           <div v-for="item1 in pageClassInfo.commentlist">
@@ -131,14 +152,13 @@
                   <el-pagination
                     background
                     layout="prev, pager, next"
-                    :current-page="queryParam.pageNum"
-                    :page-size="queryParam.pageSize"
-                    :total="pageInfo.total"
-                    @current-change="handleChangePageNum">
+                    :current-page.sync="queryParam.pageNum"
+                    :page-size.sync="queryParam.pageSize"
+                    :total="pageClassInfo.total"
+                    @current-change="handleSearch">
                   </el-pagination>
                 </div>
               </el-card>
-
             </div>
           </div>
 
@@ -161,6 +181,7 @@
 import QuickEntry from '@/components/QuickEntry'
 import Leaderboard from '@/components/Leaderboard'
 import { searchQuestion } from '@/api/question'
+import { searchArticle } from "../api/class";
 
 export default {
   components: {
@@ -169,6 +190,8 @@ export default {
   },
   data () {
     return {
+      currentIndex: -1,
+      isContentActionsFixed: true,
       isQuestionActive: true,
       isArticleActive: false,
       queryParam: {
@@ -204,27 +227,7 @@ export default {
               "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
             },
             title: 'C++智能指针详解',
-            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
+            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 ',
             createTime: new Date(),
             isExpand: false,
           },
@@ -237,27 +240,7 @@ export default {
               "avatar": "https://pic4.zhimg.com/da8e974dc_is.jpg"
             },
             title: 'C++智能指针详解',
-            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）,智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。程序员忘记 delete，流程太复杂，最终导致没有 delete，异常导致程序过早退出，没有执行 delete 的情况并不罕见。\n' +
-              '\n' +
-              '用智能指针便可以有效缓解这类问题，本文主要讲解参见的智能指针的用法。包括：std::auto_ptr、boost::scoped_ptr、boost::shared_ptr、boost::scoped_array、boost::shared_array、boost::weak_ptr、boost::intrusive_ptr。你可能会想，如此多的智能指针就为了解决new、delete匹配问题，真的有必要吗？看完这篇文章后，我想你心里自然会有答案。\n' +
-              '\n' +
-              '    下面就按照顺序讲解如上 7 种智能指针（smart_ptr）',
+            content: '智能指针：auto-ptr，shared-ptr，weak-ptr,由于 C++ 语言没有自动内存回收机制，程序员每次 new 出来的内存都要手动 delete。',
             createTime: new Date(),
             isExpand: false,
           }
@@ -288,6 +271,7 @@ export default {
   computed: {
 
   },
+  mounted() {window.addEventListener('scroll', this.handleScroll)},
   created () {
     this.queryParam.searchTitle = this.$route.query.value
     this.handleSearch()
@@ -308,6 +292,10 @@ export default {
         console.log('获取的问题列表', resp.data)
         this.pageInfo = resp.data
       })
+      searchArticle(this.queryParam).then(resp => {
+        console.log('获取的文章列表', resp.data)
+        this.pageClassInfo = resp.data
+      })
     },
     handleWriteAnswer (questionId) {
       localStorage.setItem('write', true)
@@ -318,20 +306,6 @@ export default {
       this.queryParam.pageNum = currentPage
       this.handleSearch()
     },
-    togglePickUp(item, e) {
-      let target = e.target.parentNode;//点击后获取当前评论
-      item.isExpand = !item.isExpand;//切换状态
-      if (item.isExpand) {
-        //true
-        //当下全文状态
-        target.style.height = "auto";
-      } else {
-        //false
-        // 当下收起状态
-        target.style.height = "3rem";//收起状态的容器高度
-
-      }
-    },
     handlevisible (item,e) {
       if(document.getElementById(item.id).style.display == "block")
       {
@@ -341,20 +315,56 @@ export default {
       {
         document.getElementById(item.id).style.display = "block"
       }
-    }
-  },
-  filters: {
-    explainLen: function (item) {
-      if (!item.content) return;
-      if (item.isExpand) {
-        //当下全文状态
-        return item.content.substr(0, item.content.length);//字符串截取
-      } else {
-        // 当下收起状态
-        return item.content.substr(0, 75);//字符串截取100个字
+    },
+    handleScroll () {
+      // 获取需要判断顶部和底部到浏览器底部距离的元素
+      if (this.currentIndex !== -1) {
+        var item = this.$refs.answerItem[this.currentIndex]
+
+        // 元素的底部或顶部已经到达浏览器底部
+        if (this.isBottomReachToBottomOfBrowser(item) || this.isTopReachToBottomOfBrowser(item)) {
+          this.isContentActionsFixed = false
+        } else {
+          // 介于两者之间，需要固定操作栏
+          this.isContentActionsFixed = true
+        }
       }
-    }
-  }
+
+    },
+    isBottomReachToBottomOfBrowser (item) {
+      // 元素本身的高度和它到父元素顶部的高度
+      var H = item.offsetHeight + item.offsetTop
+      // 滚动距离界限1,超过这个距离，所选元素的底部就会位于浏览器底部以上
+      var scrollHeightToBottom = H - document.documentElement.clientHeight + 54
+      // 由于滚动而被隐藏的高度
+      var hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+
+      if (hiddenHeight >= scrollHeightToBottom) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isTopReachToBottomOfBrowser (item) {
+      // 元素本身的高度和它到父元素顶部的高度
+      var H = item.offsetHeight + item.offsetTop
+      // 滚动距离界限2,小于这个距离，所选元素的顶部就会位于浏览器底部以下
+      var scrollHeightToTop = item.offsetTop - document.documentElement.clientHeight + 150
+      // 由于滚动而被隐藏的高度
+      var hiddenHeight = document.documentElement.scrollTop + document.body.scrollTop
+
+      if (hiddenHeight < scrollHeightToTop) {
+        return true
+      } else {
+        return false
+      }
+    },
+    handleExpandContent (index) {
+      this.currentIndex = index
+      // 延迟执行边界判断，防止handleScroll方法读取到渲染之前的元素高度
+      setTimeout(this.handleScroll, 100)
+    },
+  },
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -578,5 +588,43 @@ export default {
 }
 .comment {
   display: none;
+}
+
+.ContentItem-rightButton {
+  margin-left: auto;
+}
+
+.ContentItem-actions.is-fixed {
+  // margin: 0;
+  -webkit-box-shadow: 0 -1px 3px rgba(26,26,26,.1);
+  box-shadow: 0 -1px 3px rgba(26,26,26,.1);
+}
+.Sticky.is-absolute, .Sticky.is-fixed {
+  box-sizing: border-box;
+}
+.Sticky.is-fixed {
+  position: fixed;
+  z-index: 2;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.RichContent-actions.is-fixed {
+  -webkit-animation: slideInUp .2s;
+  animation: slideInUp .2s;
+  animation-duration: 0.2s;
+  animation-timing-function: ease;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: none;
+  animation-play-state: running;
+  animation-name: slideInUp;
+}
+
+.specialContentItem-actions {
+  width: 691px;
+  bottom: 0px;
+  // left: 259.6px;
+  margin: 0 -20px;
 }
 </style>
