@@ -238,6 +238,7 @@
         }
       },
       handleArticleSortChange() {
+        console.log(this.queryParam)
         this.handleGetArticleList()
         //this.pageClassInfo.list = this.sortKey(this.pageClassInfo.list,'createTime')
       },
@@ -262,7 +263,7 @@
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" scoped>
   // 问题、文章列表
   .my-main {
     display: block;
