@@ -44,6 +44,8 @@ export function getClassDetail (articleId) {
   return request({
     url: '/article',
     method: 'get',
-    query: articleId
+    params: {
+      articleId
+    }
   })
 }
