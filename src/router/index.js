@@ -68,6 +68,12 @@ export default new Router({
       meta: { title: '知否问答' }
     },
     {
+      path: '/draftbox',
+      component: () => import('@/views/draftBox'),
+      hidden: true,
+      meta: { title: '知否问答' }
+    },
+    {
       path: '/notificationCenter',
       component: () => import('@/views/notificationCenter'),
       hidden: true,

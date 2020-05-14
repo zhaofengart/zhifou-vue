@@ -49,3 +49,11 @@ export function getClassDetail (articleId) {
     }
   })
 }
+
+export function listArticleDraft (query) {
+  return request({
+    url: '/article/draft/list',
+    method: 'get',
+    params: query
+  })
+}

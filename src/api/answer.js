@@ -23,3 +23,11 @@ export function addAnswer (data) {
     data: data
   })
 }
+
+export function listAnswerDraft (query) {
+  return request({
+    url: '/answer/draft/list',
+    method: 'get',
+    params: query
+  })
+}

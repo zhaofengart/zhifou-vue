@@ -11,7 +11,7 @@
             <svg-icon icon-class="write" class="GlobalWrite-navIcon"></svg-icon> 
             <div class="GlobalWrite-navTitle">写文章</div>
           </router-link>
-          <router-link to="" title="草稿箱" class="GlobalWrite-navItem">
+          <router-link to="/draftbox" title="草稿箱" class="GlobalWrite-navItem">
             <svg-icon icon-class="draft" class="GlobalWrite-navIcon"></svg-icon> 
             <div class="GlobalWrite-navTitle">草稿箱</div>
           </router-link>
