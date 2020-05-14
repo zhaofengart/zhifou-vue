@@ -109,7 +109,7 @@
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss">
+<style rel="stylesheet/scss" lang="scss" scoped>
 
   // 第一部分
   .Notification-main {
