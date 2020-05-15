@@ -109,7 +109,7 @@
                         <MarkdownEditor v-model="answerForm.content" v-bind:content.sync="answerForm.content" v-bind:isFull.sync="isFullScreen"></MarkdownEditor>
                         <div class="AnswerForm-footer" :class="{ 'is-write-answer-footer-fixed': isFullScreen}">
                           <div class="AnswerForm-footerContent">
-                            <el-button class="Button AnswerForm-submit Button--blue" plain>保存为草稿</el-button>
+                            <el-button class="Button AnswerForm-submit Button--blue" plain @click="handleSaveAsDraft">保存为草稿</el-button>
                             <button type="button" class="Button AnswerForm-submit Button--primary Button--blue" @click="handleSubmitAnswer">提交回答</button>
                           </div>
                         </div>
@@ -251,7 +251,7 @@ import { mapGetters } from 'vuex'
 import Editor from '@/components/Editor'
 import MarkdownEditor from '@/components/MarkdownEditor'
 import { getQuestion } from '@/api/question'
-import { listAnswer, addAnswer} from '@/api/answer'
+import { listAnswer, addAnswer, getAnswerDraft, saveAsDraft} from '@/api/answer'
 import { listAnswerComment, addAnswerComment } from '@/api/comment'
 
 export default {
@@ -302,6 +302,7 @@ export default {
       },
       // 回答表单
       answerForm: {
+        id: undefined,
         questionId: undefined,
         content: ''
       },
@@ -359,8 +360,17 @@ export default {
         this.queryParam.questionId = this.question.id
         this.answerForm.questionId = this.question.id
 
-        // 确保先取到问题再获取对应的回答
+        // 确保先取到问题再获取对应的回答列表和回答草稿
         this.getAnswersByParam()
+        this.getAnswerDraft()
+      })
+    },
+    // 获取该问题对应的当前用户的回答草稿
+    getAnswerDraft () {
+      getAnswerDraft(this.$route.query.questionId).then(resp => {
+        if (resp.data !== null) {
+          this.answerForm = resp.data
+        } 
       })
     },
     getAnswersByParam () {
@@ -374,6 +384,17 @@ export default {
         })
         this.answerList = this.answerList.concat(tempList)
         this.busy = false
+      })
+    },
+    // 保存为草稿
+    handleSaveAsDraft () {
+      if (this.answerForm.content.trim().length === 0) {
+        this.$message({ showClose: true, message: '回答内容不能为空', type: 'warning' })
+        return
+      }
+
+      saveAsDraft(this.answerForm).then(resp => {
+        this.$message({ message: '保存成功', type: 'success' })
       })
     },
     // 提交回答

@@ -31,3 +31,21 @@ export function listAnswerDraft (query) {
     params: query
   })
 }
+
+export function getAnswerDraft (questionId) {
+  return request({
+    url: '/answer/draft',
+    method: 'get',
+    params: {
+      questionId
+    }
+  })
+}
+
+export function saveAsDraft (data) {
+  return request({
+    url: '/answer/draft/save',
+    method: 'post',
+    data: data
+  })
+}

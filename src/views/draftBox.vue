@@ -9,7 +9,10 @@
               <div class="List-item" v-for="item in answerDraftList" :key="item.id">
                 <h2 class="ContentItem-title">
                   <div class="QuestionItem-title">
-                    <a href="">{{item.question.title}}</a>
+                    <!-- <a href="">{{item.question.title}}</a> -->
+                    <router-link :to="{path: '/question', query: {questionId: item.question.id}}" target="_blank">
+                      <span @click="handleWriteAnswer">{{item.question.title}}</span>
+                    </router-link>
                   </div>
                 </h2>
               </div>
@@ -102,6 +105,9 @@ export default {
         this.articleDraftTotal = resp.data.total
         this.articleDraftList = resp.data.list
       })
+    },
+    handleWriteAnswer () {
+      localStorage.setItem('write', true)
     }
   }
 }

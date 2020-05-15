@@ -26,7 +26,7 @@ export function searchArticle (query) {
 
 export function savearticle (data) {
   return request({
-    url: 'article/save',
+    url: '/article/draft/save',
     method: 'post',
     data: data
   })
