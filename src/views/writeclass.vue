@@ -13,7 +13,7 @@
           <el-form-item>
             <div class="ClassPublish-footer">
               <el-button class="Saveclass" plain @click="handleSaveClass" :disabled="btnDisabled">保存为草稿</el-button>
-              <el-button type="primary" size="medium" @click="handlePublishClass" :disabled="btnDisabled">发布问题</el-button>
+              <el-button type="primary" size="medium" @click="handlePublishClass" :disabled="btnDisabled">发布文章</el-button>
             </div>
           </el-form-item>
         </el-form>
@@ -80,8 +80,15 @@
             console.log('校验成功')
             console.log(this.form)
             addClass(this.form).then(response => {
-              Message.success("发布成功")
-              this.$router.push({path: '/'})
+              this.$message({
+                message: '发布成功，增加 ' + response.data + ' 积分',
+                type: 'success',
+                duration: 0,
+                showClose: true,
+                onClose: () => {
+                  this.$router.push({path: '/'})
+                }
+              })
             })
           }
         })
