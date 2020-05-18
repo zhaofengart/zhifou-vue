@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import permission from './directive/permission'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
@@ -36,6 +37,7 @@ Vue.prototype.download = download
 // 全局组件挂载
 Vue.component('IndexHeader', IndexHeader)
 
+Vue.use(permission)
 Vue.use(ElementUI)
 Vue.use(VueHighlightJS)
 Vue.use(vueiInfinite)
