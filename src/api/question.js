@@ -20,8 +20,11 @@ export function recommendQuestion (title) {
 
 export function getQuestion (questionId) {
   return request({
-    url: '/question/' + questionId,
-    method: 'get'
+    url: '/question',
+    method: 'get',
+    params: {
+      questionId
+    }
   })
 }
 
