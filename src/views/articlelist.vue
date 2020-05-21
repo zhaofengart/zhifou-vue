@@ -15,7 +15,7 @@
                   <el-radio :label="2">按时间排序</el-radio>
                 </el-radio-group>
               </div>
-              <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo1" :key="index">
+              <div class="TopstoryItem TopstoryItem-isRecommend"  v-for="(item,index) in pageClassInfo.list" :key="index">
                 <h2 class="ContentItem-title">
                   <!-- 文章标题 -->
                   <router-link :to="{path: '/classDetail', query: {articleId: item.id}}" target="_blank">
@@ -55,7 +55,7 @@
                       </span>
                       100收藏
                     </button>
-                    <button type="button" class="Button ContentItem-action Button--plain"style="display: flex">
+                    <button type="button" class="Button ContentItem-action Button--plain" style="display: flex">
                       <span style="display: inline-flex; align-items: center;margin-top: 2px">
                         <svg-icon icon-class="like"></svg-icon>
                       </span>

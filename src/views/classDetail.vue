@@ -33,7 +33,6 @@
                         <span class="RichText ztext CopyrightRichText-richText" itemprop="text" v-html="article.content"></span>
                       </div>
                       <div
-                        v-if="isContentActionsFixed"
                         class="ContentItem-actions"
                         :class="{ 'Sticky': currentIndex === -1, 'RichContent-actions': currentIndex === -1, 'is-fixed': currentIndex === -1 && isContentActionsFixed , 'is-bottom': currentIndex === -1, 'specialContentItem-actions': currentIndex === -1}"
                         style="height: 54px;">
@@ -82,7 +81,7 @@
     data () {
       return {
         currentIndex: -1,
-        isContentActionsFixed: true,
+        isContentActionsFixed: false,
         article: {
             "title": '智能指针详解',
             "id": 123,
